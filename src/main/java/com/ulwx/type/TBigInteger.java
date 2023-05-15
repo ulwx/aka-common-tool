@@ -1,0 +1,33 @@
+package com.ulwx.type;
+
+import java.math.BigInteger;
+
+public class TBigInteger implements TType {
+    private BigInteger value;
+
+    public TBigInteger() {
+
+    }
+
+    public TBigInteger(BigInteger value) {
+        this.value = value;
+    }
+
+    @Override
+    public BigInteger getValue() {
+        return value;
+    }
+
+    public void setValue(BigInteger value) {
+        this.value = value;
+    }
+
+    public String toString() {
+        return value + "";
+    }
+
+    @Override
+    public Class wrappedClass() {
+        return BigInteger.class;
+    }
+}

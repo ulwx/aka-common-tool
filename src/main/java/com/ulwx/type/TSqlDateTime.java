@@ -1,0 +1,33 @@
+package com.ulwx.type;
+
+import java.sql.Timestamp;
+
+public class TSqlDateTime implements TType {
+    private Timestamp value;
+
+    public TSqlDateTime() {
+
+    }
+
+    public TSqlDateTime(Timestamp value) {
+        this.value = value;
+    }
+
+    @Override
+    public Timestamp getValue() {
+        return value;
+    }
+
+    public void setValue(Timestamp value) {
+        this.value = value;
+    }
+
+    public String toString() {
+        return value + "";
+    }
+
+    @Override
+    public Class wrappedClass() {
+        return Timestamp.class;
+    }
+}
