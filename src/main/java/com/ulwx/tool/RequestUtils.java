@@ -15,7 +15,6 @@ import java.util.Map;
 public class RequestUtils {
 	public static final String REQUEST_BODY_STR="REQUEST_BODY_STR";
 	private Map<String, Object[]> rParms = new HashMap<String, Object[]>();
-	private Map<String, Object[]> objs = new HashMap<String, Object[]>();
 
 	private static Logger log = Logger.getLogger(RequestUtils.class);
 
@@ -23,10 +22,14 @@ public class RequestUtils {
 		rParms = requestParameters;
 	}
 
+
 	public RequestUtils() {
 		rParms = new HashMap<String, Object[]>();
 	}
 
+	public void putAll(Map<String, ? extends Object[]> map){
+		rParms.putAll(map);
+	}
 	public void setString(String name, String value) {
 		rParms.put(name, new String[] { value });
 	}
@@ -98,16 +101,16 @@ public class RequestUtils {
 	}
 
 	public void setObject(String name, Object value) {
-		objs.put(name, new Object[] { value });
+		rParms.put(name, new Object[] { value });
 	}
 
 	public void setObjects(String name, Object[] values) {
-		objs.put(name, values);
+		rParms.put(name, values);
 	}
 
 	public Object getObject(String name) {
 		try {
-			Object value = ArrayUtils.getFirst(objs.get(name));
+			Object value = ArrayUtils.getFirst(rParms.get(name));
 			if (value == null)
 				return null;
 			return value;
@@ -118,7 +121,7 @@ public class RequestUtils {
 
 	public Object[] getObjects(String name) {
 		try {
-			Object[] value = objs.get(name);
+			Object[] value = rParms.get(name);
 			return value;
 		} catch (Exception e) {
 			return null;
@@ -163,13 +166,16 @@ public class RequestUtils {
 
 	}
 	public void setBody(String bodyStr){
-
+		this.setString(REQUEST_BODY_STR,bodyStr);
 	}
 	public <T> T getJson(String name,Class<T> c) throws Exception{
 		String str=this.getString(name);
 		return (T)ObjectUtils.fromJsonToObject(str, c);
 	}
 
+	public String getBody(){
+		return this.getString(REQUEST_BODY_STR);
+	}
 	public <T> T getBody(Class<T> c){
 		try {
 			return this.getJson(REQUEST_BODY_STR, c);
@@ -375,16 +381,35 @@ public class RequestUtils {
 	public void setBoolean(String name, Boolean value) {
 		rParms.put(name, new Boolean[] { value });
 	}
-	public void setFileName(String name,String fileName){
+	public void setFile(String name,File file,String fileName,String contentType){
+		rParms.put(name,new Object[]{file});
+		if(StringUtils.hasText(fileName)) {
+			this.setFileName(name, fileName);
+		}
+		if(StringUtils.hasText(contentType)) {
+			this.setFileContentType(name, contentType);
+		}
+
+	}
+	public void setFiles(String name,File[] files,String[] fileNames,String[] contentTypes){
+		rParms.put(name,files);
+		if(fileNames!=null) {
+			this.setFileNames(name, fileNames);
+		}
+		if(contentTypes!=null) {
+			this.setFileContentTypes(name, contentTypes);
+		}
+	}
+	private void setFileName(String name,String fileName){
 		rParms.put(name+"FileName",new String[]{fileName});
 	}
-	public void setFileName(String name,String[] fileNames){
+	private void setFileNames(String name,String[] fileNames){
 		rParms.put(name+"FileName",fileNames);
 	}
-	public void setFileContentType(String name,String contentType){
+	private void setFileContentType(String name,String contentType){
 		rParms.put(name+"ContentType",new String[]{contentType});
 	}
-	public void setFileContentTypes(String name,String[] contentTypes){
+	private void setFileContentTypes(String name,String[] contentTypes){
 		rParms.put(name+"ContentType",contentTypes);
 	}
 	public void setBooleans(String name, Boolean[] values) {
