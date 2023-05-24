@@ -1,15 +1,5 @@
 package com.ulwx.tool;
 
-import java.net.InetAddress;
-import java.net.NetworkInterface;
-import java.net.URI;
-import java.net.URL;
-import java.util.ArrayList;
-import java.util.Enumeration;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-
 import org.apache.http.Header;
 import org.apache.http.HeaderElement;
 import org.apache.http.NameValuePair;
@@ -19,10 +9,16 @@ import org.apache.http.message.BasicNameValuePair;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.net.InetAddress;
+import java.net.NetworkInterface;
+import java.net.URI;
+import java.net.URL;
+import java.util.*;
+
 public class NetUtils {
 	private static Logger log = LoggerFactory.getLogger(NetUtils.class);
 
-	public static String getQueryStrFromURL(String url) throws Exception {
+	public static String getQueryStrFromURL(String url) {
 
 		int index = url.indexOf("?");
 		if (index == -1)

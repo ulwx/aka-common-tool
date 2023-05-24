@@ -444,11 +444,7 @@ public abstract class ObjectUtils {
 	 * @return
 	 * @throws Exception
 	 */
-	public static Object fromJsonToObject(String json, Type type) throws Exception {
-
-		// ObjectMapper mapper = new ObjectMapper();
-		// T obj = mapper.readValue(json, type);
-		// return obj;
+	public static <T> T fromJsonToObject(String json, Type type) throws Exception {
 
 		GsonBuilder builder = new GsonBuilder();
 		registGsonBuilder(builder);
@@ -456,8 +452,7 @@ public abstract class ObjectUtils {
 
 		Gson gson = builder.create();
 
-		// Gson gson=new Gson();
-		Object target = gson.fromJson(json, type);
+		T target = gson.fromJson(json, type);
 		return target;
 
 	}

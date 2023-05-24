@@ -14,6 +14,8 @@ import java.util.Map;
 
 public class RequestUtils {
 	public static final String REQUEST_BODY_STR="REQUEST_BODY_STR";
+	public static final String REQUEST_PARAM_MAP="REQUEST_PARAM_MAP";
+	public static final String REQUEST_QUERY_STR="REQUEST";
 	private Map<String, Object[]> rParms = new HashMap<String, Object[]>();
 
 	private static Logger log = Logger.getLogger(RequestUtils.class);
@@ -179,6 +181,31 @@ public class RequestUtils {
 	public <T> T getBody(Class<T> c){
 		try {
 			return this.getJson(REQUEST_BODY_STR, c);
+		}catch (Exception e){
+			log.error(""+e,e);
+			return null;
+		}
+	}
+	public void setRequestParamMap(Map<String, String[]> paramaterMap){
+		this.setObject(REQUEST_PARAM_MAP,paramaterMap);
+	}
+
+	public Map<String, String[]> getRequestParamMap(){
+		try {
+			return (Map<String, String[]> )this.getObject(REQUEST_PARAM_MAP);
+		}catch (Exception e){
+			log.error(""+e,e);
+			return null;
+		}
+	}
+
+	public void setRequestQueryStr(String queryStr){
+		this.setString(REQUEST_QUERY_STR,queryStr);
+	}
+
+	public String getRequestQueryStr(){
+		try {
+			return this.getString(REQUEST_QUERY_STR);
 		}catch (Exception e){
 			log.error(""+e,e);
 			return null;
