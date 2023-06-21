@@ -863,7 +863,7 @@ public class CTime {
 	}
 
 	public static Date addSenconds(int seconds) {
-		return addMinutes(CTime.getCurrentDateTime(), seconds);
+		return addSenconds(CTime.getCurrentDateTime(), seconds);
 	}
 
 	// 01. java.util.Date --> java.time.LocalDateTime

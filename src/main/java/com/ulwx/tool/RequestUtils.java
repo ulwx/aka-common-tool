@@ -15,7 +15,7 @@ import java.util.Map;
 public class RequestUtils {
 	public static final String REQUEST_BODY_STR="REQUEST_BODY_STR";
 	public static final String REQUEST_PARAM_MAP="REQUEST_PARAM_MAP";
-	public static final String REQUEST_QUERY_STR="REQUEST";
+	public static final String REQUEST_QUERY_STR="REQUEST_QUERY_STR";
 	private Map<String, Object[]> rParms = new HashMap<String, Object[]>();
 
 	private static Logger log = Logger.getLogger(RequestUtils.class);

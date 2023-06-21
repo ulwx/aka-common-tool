@@ -32,7 +32,41 @@ public class FileUtils {
 		return org.apache.commons.io.FileUtils.listFiles(directory, extensions,
 				recursive);
 	}
-	
+
+	/**
+	 * 检测 relativePath是否包含..或..等字符，防止攻击
+	 * @param relativePath
+	 */
+	public static void checkRelativePath(String relativePath)
+	{
+		File file = new File(relativePath);
+
+		if (file.isAbsolute())
+		{
+			throw new RuntimeException("Directory traversal attempt - absolute path not allowed");
+		}
+
+		String pathUsingCanonical;
+		String pathUsingAbsolute;
+		try
+		{
+			pathUsingCanonical = file.getCanonicalPath();
+			pathUsingAbsolute = file.getAbsolutePath();
+		}
+		catch (IOException e)
+		{
+			throw new RuntimeException("Directory traversal attempt?", e);
+		}
+
+
+		// Require the absolute path and canonicalized path match.
+		// This is done to avoid directory traversal
+		// attacks, e.g. "1/../2/"
+		if (! pathUsingCanonical.equals(pathUsingAbsolute))
+		{
+			throw new RuntimeException("Directory traversal attempt?");
+		}
+	}
 	public static Collection<File> listFilesAndDirs(File directory, 
 			boolean recursive) {
 		

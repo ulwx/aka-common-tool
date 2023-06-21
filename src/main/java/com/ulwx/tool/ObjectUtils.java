@@ -383,7 +383,7 @@ public abstract class ObjectUtils {
 	 * @return
 	 * @throws Exception
 	 */
-	public static <T> T fromJsonToObject(String json, Class<T> type) throws Exception {
+	public static <T> T fromJsonToObject(String json, Class<T> type) {
 
 		GsonBuilder builder = new GsonBuilder();
 		registGsonBuilder(builder);
@@ -424,13 +424,13 @@ public abstract class ObjectUtils {
 	 * @return
 	 * @throws Exception
 	 */
-	public static Map fromJsonToMap(String json) throws Exception {
+	public static Map fromJsonToMap(String json) {
 
 		return JSON.parseObject(json);
 
 	}
 
-	public static Map fromJsonToMapWithFastJson(String json) throws Exception {
+	public static Map fromJsonToMapWithFastJson(String json) {
 
 		return JSON.parseObject(json);
 
