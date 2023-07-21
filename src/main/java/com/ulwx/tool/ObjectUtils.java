@@ -439,12 +439,14 @@ public abstract class ObjectUtils {
 	/**
 	 *
 	 * @param json
-	 * @param type <xmp> Type typeOfT = new
-	 *             com.google.gson.reflect.TypeToken<Collection<Foo>>(){}.getType();</xmp>
+	 * @param type
+	 * <xmp>
+	 *   Type typeOfT = new com.google.gson.reflect.TypeToken<Collection<Foo>>(){}.getType();
+	 * </xmp>
 	 * @return
 	 * @throws Exception
 	 */
-	public static <T> T fromJsonToObject(String json, Type type) throws Exception {
+	public static <T> T fromJsonToObject(String json, Type type) {
 
 		GsonBuilder builder = new GsonBuilder();
 		registGsonBuilder(builder);

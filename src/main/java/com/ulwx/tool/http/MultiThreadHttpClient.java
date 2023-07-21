@@ -150,7 +150,7 @@ public class MultiThreadHttpClient {
 			connManager.setMaxTotal(maxTotalConnections);
 			connManager.setDefaultMaxPerRoute(maxTotalConnections / 2);
 
-			connManager.setValidateAfterInactivity(2000);
+			connManager.setValidateAfterInactivity(5000);
 			
 			LaxRedirectStrategy redirectStrategy = new LaxRedirectStrategy();  
 
