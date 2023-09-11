@@ -17,11 +17,9 @@
 				<artifactId>maven-jar-plugin</artifactId>
 				<version>3.0.2</version>
 				<configuration>
-						<excludes>
-                            <exclude>*.xml</exclude>
-                            <exclude>*.property</exclude>
-                            <exclude>*.yaml</exclude>
-                       
+					<excludes>
+						<exclude>log*.xml</exclude>
+						<exclude>log*.properties</exclude>
 					</excludes>
 					<archive>
 						<manifest>
