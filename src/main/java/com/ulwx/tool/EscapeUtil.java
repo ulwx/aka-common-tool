@@ -357,6 +357,6 @@ public class EscapeUtil {
 		return keyword;
 	}
 	public static void main(String[] args) throws IOException {
-		System.out.println(escapeHtml("<html>"));
+		System.out.println(unescapeHtml(  "&#x30D1;&#x30E9;&#x30E1;&#x30FC;&#x30BF;&#x672A;&#x8A2D;&#x5B9A;&#x30A8;&#x30E9;&#x30FC;"));
 	}
 }
