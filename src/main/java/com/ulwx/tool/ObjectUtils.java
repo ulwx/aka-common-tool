@@ -1815,7 +1815,7 @@ class Converter {
 
 				LocalDateTime date;
 				try {
-					date = LocalDateTime.parse(json.getAsString(), CTime.DTF_YMD_HH_MM_SS);
+					date = LocalDateTime.parse(json.getAsString(), CTime.DTF_YMD_HH_MM_SS_SSS);
 				} catch (Exception e) {
 					// TODO Auto-generated catch block
 					throw new JsonParseException(e);
@@ -2288,7 +2288,7 @@ class Converter {
 			}
 
 			LocalDateTime date = (LocalDateTime) object;
-			serializer.write(CTime.formatLocalDateTime(date));
+			serializer.write(CTime.formatDateTime(date,CTime.DTF_YMD_HH_MM_SS));
 		}
 	}
 
@@ -2302,7 +2302,7 @@ class Converter {
 			}
 
 			LocalTime date = (LocalTime) object;
-			serializer.write(CTime.formatLocalTime(date));
+			serializer.write(CTime.formatLocalTime(date,CTime.DTF_HH_MM_SS));
 		}
 	}
 

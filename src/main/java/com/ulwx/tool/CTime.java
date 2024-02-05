@@ -875,6 +875,25 @@ public class CTime {
 		return localDateTime;
 	}
 
+	public static LocalDateTime parseToLocalDateTime(String dt){
+		return LocalDateTime.parse(dt, CTime.DTF_YMD_HH_MM_SS_SSS);
+	}
+	public static LocalDateTime parseToLocalDateTime(String dt,DateTimeFormatter formatter){
+		return LocalDateTime.parse(dt,formatter);
+	}
+	public static LocalDate parseToLocalDate(String dt){
+		return LocalDate.parse(dt, CTime.DTF_YMD);
+	}
+	public static LocalDate parseToLocalDate(String dt,DateTimeFormatter formatter){
+		return LocalDate.parse(dt, formatter);
+	}
+	public static LocalTime parseToLocalTime(String dt){
+		return LocalTime.parse(dt, CTime.DTF_HH_MM_SS_SSS);
+	}
+	public static LocalTime parseToLocalTime(String dt,DateTimeFormatter formatter){
+		return LocalTime.parse(dt, formatter);
+	}
+
 	public static LocalDateTime DateToLocalDateTime(Date ldt) {
 		;
 		Instant instant = ldt.toInstant();
