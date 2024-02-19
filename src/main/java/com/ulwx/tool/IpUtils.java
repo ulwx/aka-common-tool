@@ -1,41 +1,36 @@
 package com.ulwx.tool;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.net.Inet4Address;
 import java.net.InetAddress;
 import java.net.NetworkInterface;
 import java.util.Enumeration;
 import java.util.HashSet;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import com.ulwx.tool.ip.FileUtil;
-import com.ulwx.tool.ip.IPLocation;
-import com.ulwx.tool.ip.IPSeeker;
-import com.ulwx.type.TString;
-
 public class IpUtils {
 	private static Logger log = LoggerFactory.getLogger(IpUtils.class);
 
-	public static class SingletonHolder {
-		public static IPSeeker seeker = null;
-		static {
-			try {
+//	public static class SingletonHolder {
+//		public static IPSeeker seeker = null;
+//		static {
+//			try {
+//
+//				seeker = new IPSeeker(FileUtil.getJarResourceToBytes("/qqwry.dat"));///
+//			} catch (Exception e) {
+//				log.error("", e);
+//			}
+//		}
+//	}
 
-				seeker = new IPSeeker(FileUtil.getJarResourceToBytes("/qqwry.dat"));///
-			} catch (Exception e) {
-				log.error("", e);
-			}
-		}
-	}
-
-	static {
-		try {
-			SingletonHolder.class.newInstance();/////
-		} catch (Exception e) {
-			log.error("", e);
-		}
-	}
+//	static {
+//		try {
+//			SingletonHolder.class.newInstance();/////
+//		} catch (Exception e) {
+//			log.error("", e);
+//		}
+//	}
 
 	public static HashSet<String> countrySet = new HashSet<String>();
 	static {
@@ -228,38 +223,38 @@ public class IpUtils {
 		countrySet.add("津巴布韦");
 	}
 
-	public static void getInfoByIP(String ipStr, TString areaInfo, TString carrierAddrInfo) throws Exception {
-		try {
-			areaInfo.setValue("");
-			carrierAddrInfo.setValue("");
-			if (StringUtils.isEmpty(ipStr))
-				return;
-			if (Inet4Address.getByName(ipStr) instanceof Inet4Address) {
-				if (SingletonHolder.seeker == null) {
-					SingletonHolder.seeker = new IPSeeker(FileUtil.getJarResourceToBytes("/qqwry.dat"));
-				}
-				IPLocation location = SingletonHolder.seeker
-						.getLocation((Inet4Address) (Inet4Address.getByName(ipStr)));
-				String countryProvinceCity = location.getCountry();
-				log.debug(countryProvinceCity);
-				areaInfo.setValue(countryProvinceCity);
-				carrierAddrInfo.setValue(location.getArea());
-			} else {
-				areaInfo.setValue("");
-				carrierAddrInfo.setValue("");
-				throw new Exception("不是ipv4格式！");
-			}
-
-		} catch (Exception e) {
-			log.error("", e);
-			throw e;
-		} finally {
-
-		}
-	}
+//	public static void getInfoByIP(String ipStr, TString areaInfo, TString carrierAddrInfo) throws Exception {
+//		try {
+//			areaInfo.setValue("");
+//			carrierAddrInfo.setValue("");
+//			if (StringUtils.isEmpty(ipStr))
+//				return;
+//			if (Inet4Address.getByName(ipStr) instanceof Inet4Address) {
+//				if (SingletonHolder.seeker == null) {
+//					SingletonHolder.seeker = new IPSeeker(FileUtil.getJarResourceToBytes("/qqwry.dat"));
+//				}
+//				IPLocation location = SingletonHolder.seeker
+//						.getLocation((Inet4Address) (Inet4Address.getByName(ipStr)));
+//				String countryProvinceCity = location.getCountry();
+//				log.debug(countryProvinceCity);
+//				areaInfo.setValue(countryProvinceCity);
+//				carrierAddrInfo.setValue(location.getArea());
+//			} else {
+//				areaInfo.setValue("");
+//				carrierAddrInfo.setValue("");
+//				throw new Exception("不是ipv4格式！");
+//			}
+//
+//		} catch (Exception e) {
+//			log.error("", e);
+//			throw e;
+//		} finally {
+//
+//		}
+//	}
 
 	public static void main(String[] args) {
-		System.out.println(ObjectUtils.toString(getCountryProvinceCityCarrier("183.60.222.63")));
+		//System.out.println(ObjectUtils.toString(getCountryProvinceCityCarrier("183.60.222.63")));
 	}
 
 	/**
@@ -267,67 +262,67 @@ public class IpUtils {
 	 * @param ip
 	 * @return 返回4个元素的字符串数组，第一个为国家，第二个为省份，第三个为城市，第四个为运营商
 	 */
-	public static String[] getCountryProvinceCityCarrier(String ip) {
-		String[] retstrs = new String[] { "中国", "", "", "" };
-		if (StringUtils.hasText(ip)) {
-			TString areaInfo = new TString();
-			TString carrierAddrInfo = new TString();
-
-			try {
-				IpUtils.getInfoByIP(ip, areaInfo, carrierAddrInfo);
-			} catch (Exception e) {
-				log.error("", e);
-			}
-
-			String area = StringUtils.trim(areaInfo.getValue());
-			String cainfo = StringUtils.trim(carrierAddrInfo.getValue());
-			// System.out.println("==="+area);
-			// System.out.println("==="+cainfo);
-			if (countrySet.contains(area)) {
-				retstrs[0] = area;
-			} else {
-				for (String country : countrySet) {
-					if (area.contains(country) && !country.equals("蒙古")) {
-						retstrs[0] = area;
-						break;
-					}
-				}
-			}
-			String[][] strs = StringUtils.searchSubStrByReg(area, "^((内蒙古|香港|台湾|广西|西藏|宁夏|新疆)|((.*?)省))?((.*?)市)?",
-					new int[] { 1, 6 });
-			if (strs != null && strs.length >= 1 && strs[0].length >= 1) {
-				String province = StringUtils.trim(strs[0][0]).replace("省", "");
-				String city = "";
-				if (strs[0].length == 2) {
-					city = StringUtils.trim(strs[0][1]);
-					// 北京 上海 天津 重庆
-					if (city.contains("北京") || city.contains("上海") || city.contains("天津") || city.contains("重庆")) {
-						province = city;
-					}
-				}
-				retstrs[1] = province;
-				retstrs[2] = city;
-
-			}
-
-			if (cainfo.contains("联通")) {
-				retstrs[3] = "联通";
-			} else if (cainfo.contains("移动")) {
-				retstrs[3] = "移动";
-			} else if (cainfo.contains("电信")) {
-				retstrs[3] = "电信";
-			} else if (cainfo.contains("网通")) {
-				retstrs[3] = "网通";
-			} else if (cainfo.contains("长城宽带")) {
-				retstrs[3] = "长城宽带";
-			} else {
-				retstrs[3] = cainfo;
-			}
-		}
-
-		// System.out.println(ObjectUtils.toString(strs));
-		return retstrs;
-	}
+//	public static String[] getCountryProvinceCityCarrier(String ip) {
+//		String[] retstrs = new String[] { "中国", "", "", "" };
+//		if (StringUtils.hasText(ip)) {
+//			TString areaInfo = new TString();
+//			TString carrierAddrInfo = new TString();
+//
+//			try {
+//				IpUtils.getInfoByIP(ip, areaInfo, carrierAddrInfo);
+//			} catch (Exception e) {
+//				log.error("", e);
+//			}
+//
+//			String area = StringUtils.trim(areaInfo.getValue());
+//			String cainfo = StringUtils.trim(carrierAddrInfo.getValue());
+//			// System.out.println("==="+area);
+//			// System.out.println("==="+cainfo);
+//			if (countrySet.contains(area)) {
+//				retstrs[0] = area;
+//			} else {
+//				for (String country : countrySet) {
+//					if (area.contains(country) && !country.equals("蒙古")) {
+//						retstrs[0] = area;
+//						break;
+//					}
+//				}
+//			}
+//			String[][] strs = StringUtils.searchSubStrByReg(area, "^((内蒙古|香港|台湾|广西|西藏|宁夏|新疆)|((.*?)省))?((.*?)市)?",
+//					new int[] { 1, 6 });
+//			if (strs != null && strs.length >= 1 && strs[0].length >= 1) {
+//				String province = StringUtils.trim(strs[0][0]).replace("省", "");
+//				String city = "";
+//				if (strs[0].length == 2) {
+//					city = StringUtils.trim(strs[0][1]);
+//					// 北京 上海 天津 重庆
+//					if (city.contains("北京") || city.contains("上海") || city.contains("天津") || city.contains("重庆")) {
+//						province = city;
+//					}
+//				}
+//				retstrs[1] = province;
+//				retstrs[2] = city;
+//
+//			}
+//
+//			if (cainfo.contains("联通")) {
+//				retstrs[3] = "联通";
+//			} else if (cainfo.contains("移动")) {
+//				retstrs[3] = "移动";
+//			} else if (cainfo.contains("电信")) {
+//				retstrs[3] = "电信";
+//			} else if (cainfo.contains("网通")) {
+//				retstrs[3] = "网通";
+//			} else if (cainfo.contains("长城宽带")) {
+//				retstrs[3] = "长城宽带";
+//			} else {
+//				retstrs[3] = cainfo;
+//			}
+//		}
+//
+//		// System.out.println(ObjectUtils.toString(strs));
+//		return retstrs;
+//	}
 
 	private volatile static String localIp = "";
 

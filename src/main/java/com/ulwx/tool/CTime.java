@@ -16,6 +16,8 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.time.*;
 import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeFormatterBuilder;
+import java.time.temporal.ChronoField;
 import java.time.temporal.ChronoUnit;
 import java.time.temporal.TemporalAdjusters;
 import java.util.Calendar;
@@ -29,7 +31,7 @@ public class CTime {
 	public static long MILSECOND_DAY = 1000 * 60 * 60 * 24;
 
 	// 用于LocalDate，LocalDateTime，LocalTime的格式
-	public static DateTimeFormatter DTF_YMD_HH_MM_SS_SSS = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss.SSS");
+	public static DateTimeFormatter DTF_YMD_HH_MM_SS_SSS = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss[.SSS]");
 	public static DateTimeFormatter DTF_YMD = DateTimeFormatter.ofPattern("yyyy-MM-dd");
 	public static DateTimeFormatter DTF_YMD_HH_MM_SS = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
 	public static DateTimeFormatter DTF_HH_MM_SS = DateTimeFormatter.ofPattern("HH:mm:ss");
@@ -38,7 +40,27 @@ public class CTime {
 	public static DateTimeFormatter DTF_YMDHHMMSS = DateTimeFormatter.ofPattern("yyyyMMddHHmmss");
 	public static DateTimeFormatter DTF_YMDHHMMSSSSS = DateTimeFormatter.ofPattern("yyyyMMddHHmmssSSS");
 	public static DateTimeFormatter DTF_YYMMDD = DateTimeFormatter.ofPattern("yyyyMMdd");
-
+	public static DateTimeFormatter DTF_COMMON_DT = new DateTimeFormatterBuilder()
+											.appendPattern("yyyy-M-d[ H[:m[:s[.SSS]]]]")
+											.parseLenient()
+											.parseDefaulting(java.time.temporal.ChronoField.HOUR_OF_DAY, 0)
+											.parseDefaulting(java.time.temporal.ChronoField.MINUTE_OF_HOUR, 0)
+											.parseDefaulting(ChronoField.SECOND_OF_MINUTE, 0)
+											.toFormatter();
+	public static DateTimeFormatter DTF_COMMON_DT2  = new DateTimeFormatterBuilder()
+			.appendPattern("yyyy/M/d[ H[:m[:s[.SSS]]]]")
+			.parseLenient()
+			.parseDefaulting(java.time.temporal.ChronoField.HOUR_OF_DAY, 0)
+			.parseDefaulting(java.time.temporal.ChronoField.MINUTE_OF_HOUR, 0)
+			.parseDefaulting(ChronoField.SECOND_OF_MINUTE, 0)
+			.toFormatter();
+	public static DateTimeFormatter DTF_COMMON_DT3  = new DateTimeFormatterBuilder()
+			.appendPattern("yyyy年M月d日[H时[m分[s秒[.SSS]]]]")
+			.parseLenient()
+			.parseDefaulting(java.time.temporal.ChronoField.HOUR_OF_DAY, 0)
+			.parseDefaulting(java.time.temporal.ChronoField.MINUTE_OF_HOUR, 0)
+			.parseDefaulting(ChronoField.SECOND_OF_MINUTE, 0)
+			.toFormatter();
 	public static String getCurrentDate() {
 		String s = "";
 		Calendar calend;
@@ -876,26 +898,41 @@ public class CTime {
 	}
 
 	public static LocalDateTime parseToLocalDateTime(String dt){
+		dt=dt.replaceAll(" +"," ");
 		return LocalDateTime.parse(dt, CTime.DTF_YMD_HH_MM_SS_SSS);
 	}
 	public static LocalDateTime parseToLocalDateTime(String dt,DateTimeFormatter formatter){
+		dt=dt.replaceAll(" +"," ");
 		return LocalDateTime.parse(dt,formatter);
+	}
+	public static LocalDateTime parseToLocalDateTimeWithCommon(String dt){
+		dt=dt.replaceAll(" +"," ");
+		if(dt.contains("-")) {
+			return LocalDateTime.parse(dt, CTime.DTF_COMMON_DT);
+		}else if(dt.contains("/")){
+			return LocalDateTime.parse(dt, CTime.DTF_COMMON_DT2);
+		}else if(dt.contains("年")){
+			return LocalDateTime.parse(dt, CTime.DTF_COMMON_DT3);
+		}
+		return null;
 	}
 	public static LocalDate parseToLocalDate(String dt){
 		return LocalDate.parse(dt, CTime.DTF_YMD);
 	}
 	public static LocalDate parseToLocalDate(String dt,DateTimeFormatter formatter){
+		dt=dt.replaceAll(" +"," ");
 		return LocalDate.parse(dt, formatter);
 	}
 	public static LocalTime parseToLocalTime(String dt){
+		dt=dt.replaceAll(" +"," ");
 		return LocalTime.parse(dt, CTime.DTF_HH_MM_SS_SSS);
 	}
 	public static LocalTime parseToLocalTime(String dt,DateTimeFormatter formatter){
+		dt=dt.replaceAll(" +"," ");
 		return LocalTime.parse(dt, formatter);
 	}
 
 	public static LocalDateTime DateToLocalDateTime(Date ldt) {
-		;
 		Instant instant = ldt.toInstant();
 		ZoneId zone = ZoneId.systemDefault();
 		LocalDateTime localDateTime = LocalDateTime.ofInstant(instant, zone);
@@ -919,7 +956,6 @@ public class CTime {
 		LocalDate localDate = localDateTime.toLocalDate();
 		return localDate;
 	}
-
 	// 03. java.util.Date --> java.time.LocalTime
 	public static LocalTime DateToLocalTime() {
 		java.util.Date date = new java.util.Date();
@@ -929,7 +965,6 @@ public class CTime {
 		LocalTime localTime = localDateTime.toLocalTime();
 		return localTime;
 	}
-
 	public static LocalTime DateToLocalTime(Date date) {
 		Instant instant = date.toInstant();
 		ZoneId zone = ZoneId.systemDefault();
