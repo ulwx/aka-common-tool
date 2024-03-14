@@ -1004,7 +1004,10 @@ public abstract class StringUtils {
 		if(str==null){
 			return "";
 		}
-		return org.apache.commons.lang3.StringUtils.trimToEmpty(str.toString());
+		String str2= org.apache.commons.lang3.StringUtils.trimToEmpty(str.toString());
+		str2=str2.replaceAll("^(\\u00A0+)","");
+		str2=str2.replaceAll("(\\u00A0+)$","");
+		return str2;
 	}
 
 	/**
@@ -1026,7 +1029,10 @@ public abstract class StringUtils {
 		while (buf.length() > 0 && Character.isWhitespace(buf.charAt(buf.length() - 1))) {
 			buf.deleteCharAt(buf.length() - 1);
 		}
-		return buf.toString();
+		String s= buf.toString();
+		s=s.replaceAll("^(\\u00A0+)","");
+		s=s.replaceAll("(\\u00A0+)$","");
+		return s;
 	}
 
 	/**
@@ -1048,7 +1054,10 @@ public abstract class StringUtils {
 		while (buf.length() > 0 && Character.isWhitespace(buf.charAt(buf.length() - 1))) {
 			buf.deleteCharAt(buf.length() - 1);
 		}
-		return buf.toString();
+		String s= buf.toString();
+		s=s.replaceAll("^(\\u00A0+)","");
+		s=s.replaceAll("(\\u00A0+)$","");
+		return s;
 	}
 
 	/**
@@ -1067,7 +1076,10 @@ public abstract class StringUtils {
 		while (buf.length() > 0 && Character.isWhitespace(buf.charAt(0))) {
 			buf.deleteCharAt(0);
 		}
-		return buf.toString();
+		String s= buf.toString();
+		s=s.replaceAll("^(\\u00A0+)","");
+		return s;
+
 	}
 
 	public static String trimLeadingString(String str, String trimStr) {
@@ -1109,7 +1121,9 @@ public abstract class StringUtils {
 				break;
 
 		}
-		return sb.toString();
+		String s= sb.toString();
+		return s;
+
 	}
 
 	public static String trimTailStrings(String str, String[] trimStrings) {
@@ -1143,7 +1157,8 @@ public abstract class StringUtils {
 				break;
 
 		}
-		return sb.toString();
+		String s= sb.toString();
+		return s;
 	}
 
 	public static String trimTailString(String str, String trimStr) {
@@ -2465,7 +2480,10 @@ public abstract class StringUtils {
 				index++;
 			}
 		}
-		return sb.toString();
+		String s= sb.toString();;
+		s=s.replaceAll("^(\\u00A0+)","");
+		s=s.replaceAll("(\\u00A0+)$","");
+		return s;
 	}
 
 
@@ -2486,7 +2504,9 @@ public abstract class StringUtils {
 		while (sb.length() > 0 && Character.isWhitespace(sb.charAt(sb.length() - 1))) {
 			sb.deleteCharAt(sb.length() - 1);
 		}
-		return sb.toString();
+		String s= sb.toString();
+		s=s.replaceAll("(\\u00A0+)$","");
+		return s;
 	}
 
 	/**
