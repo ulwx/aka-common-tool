@@ -1594,8 +1594,10 @@ public abstract class ObjectUtils {
 		builder.registerTypeAdapter(LocalDateTime.class, localDateTimeGsonConverter);
 		builder.registerTypeAdapter(LocalDate.class, localDateGsonConverter);
 		builder.registerTypeAdapter(LocalTime.class, LocalTimeGsonConverter);
-		builder.registerTypeAdapter(Double.class, doubleGsonConverter);
-
+		builder.registerTypeAdapter(Double.class,emptyStringToDoubleDeserializer);
+		builder.registerTypeAdapter(Double.class,emptyStringToFloatDeserializer);
+		builder.registerTypeAdapter(Double.class,emptyStringToIntegerDeserializer);
+		builder.registerTypeAdapter(Double.class,emptyStringToLongDeserializer);
 	}
 
 	@SuppressWarnings("unchecked")
@@ -1634,7 +1636,11 @@ public abstract class ObjectUtils {
 	public static Converter.LocalDateTimeGsonConverter localDateTimeGsonConverter = new Converter.LocalDateTimeGsonConverter();
 	public static Converter.LocalDateGsonConverter localDateGsonConverter = new Converter.LocalDateGsonConverter();
 	public static Converter.LocalTimeGsonConverter LocalTimeGsonConverter = new Converter.LocalTimeGsonConverter();//
-	public static Converter.DoubleGsonConverter doubleGsonConverter = new Converter.DoubleGsonConverter();
+	public static Converter.EmptyStringToDoubleDeserializer emptyStringToDoubleDeserializer=new Converter.EmptyStringToDoubleDeserializer();
+	public static Converter.EmptyStringToFloatDeserializer emptyStringToFloatDeserializer=new Converter.EmptyStringToFloatDeserializer();
+	public static Converter.EmptyStringToIntegerDeserializer emptyStringToIntegerDeserializer=new Converter.EmptyStringToIntegerDeserializer();
+	public static Converter.EmptyStringToLongDeserializer emptyStringToLongDeserializer=new Converter.EmptyStringToLongDeserializer();
+
 
 	public static Converter.FalstLocalDateFormatSerializer ld = new Converter.FalstLocalDateFormatSerializer();
 	public static Converter.FalstLocalDateTimeFormatSerializer ldt = new Converter.FalstLocalDateTimeFormatSerializer();
@@ -1877,15 +1883,56 @@ class Converter {
 
 	}
 
-	public static class DoubleGsonConverter implements JsonSerializer<Double> {
+	public static class EmptyStringToIntegerDeserializer implements JsonDeserializer<Integer> {
+		@Override
+		public Integer deserialize(JsonElement json, java.lang.reflect.Type typeOfT, JsonDeserializationContext context) throws JsonParseException {
+			String stringValue = json.getAsString();
+			try{
+				return Integer.valueOf(stringValue);
+			}catch (Exception e){
+				return null;
+			}
+		}
 
+	}
+	public static class EmptyStringToDoubleDeserializer implements JsonDeserializer<Double>,JsonSerializer<Double>  {
+		@Override
+		public Double deserialize(JsonElement json, java.lang.reflect.Type typeOfT, JsonDeserializationContext context) throws JsonParseException {
+			String stringValue = json.getAsString();
+			try{
+				return Double.valueOf(stringValue);
+			}catch (Exception e){
+				return null;
+			}
+		}
 		@Override
 		public JsonElement serialize(Double src, Type typeOfSrc, JsonSerializationContext context) {
 			if (src == src.longValue())
 				return new JsonPrimitive(src.longValue());
 			return new JsonPrimitive(src);
 		}
-
+	}
+	public static class EmptyStringToFloatDeserializer implements JsonDeserializer<Float> {
+		@Override
+		public Float deserialize(JsonElement json, java.lang.reflect.Type typeOfT, JsonDeserializationContext context) throws JsonParseException {
+			String stringValue = json.getAsString();
+			try{
+				return Float.valueOf(stringValue);
+			}catch (Exception e){
+				return null;
+			}
+		}
+	}
+	public static class EmptyStringToLongDeserializer implements JsonDeserializer<Long> {
+		@Override
+		public Long deserialize(JsonElement json, java.lang.reflect.Type typeOfT, JsonDeserializationContext context) throws JsonParseException {
+			String stringValue = json.getAsString();
+			try{
+				return Long.valueOf(stringValue);
+			}catch (Exception e){
+				return null;
+			}
+		}
 	}
 
 	public static class LocalTimeGsonConverter implements JsonSerializer<LocalTime>, JsonDeserializer<LocalTime> {
@@ -2082,6 +2129,7 @@ class Converter {
 		public static com.fasterxml.jackson.databind.JsonSerializer nullLocalDateJsonSerializer = new Converter.MyNullLocalDateJsonSerializer();
 		public static com.fasterxml.jackson.databind.JsonSerializer nullLocalDateTimeJsonSerializer = new Converter.MyNullLocalDateTimeJsonSerializer();
 		public static com.fasterxml.jackson.databind.JsonSerializer nullLocalTImeJsonSerializer = new Converter.MyNullLocalTImeJsonSerializer();
+
 
 		@Override
 		public List<BeanPropertyWriter> changeProperties(SerializationConfig config, BeanDescription beanDesc,
