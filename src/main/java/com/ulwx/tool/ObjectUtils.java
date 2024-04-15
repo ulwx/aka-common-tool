@@ -1595,9 +1595,9 @@ public abstract class ObjectUtils {
 		builder.registerTypeAdapter(LocalDate.class, localDateGsonConverter);
 		builder.registerTypeAdapter(LocalTime.class, LocalTimeGsonConverter);
 		builder.registerTypeAdapter(Double.class,emptyStringToDoubleDeserializer);
-		builder.registerTypeAdapter(Double.class,emptyStringToFloatDeserializer);
-		builder.registerTypeAdapter(Double.class,emptyStringToIntegerDeserializer);
-		builder.registerTypeAdapter(Double.class,emptyStringToLongDeserializer);
+		builder.registerTypeAdapter(Float.class,emptyStringToFloatDeserializer);
+		builder.registerTypeAdapter(Integer.class,emptyStringToIntegerDeserializer);
+		builder.registerTypeAdapter(Long.class,emptyStringToLongDeserializer);
 	}
 
 	@SuppressWarnings("unchecked")
