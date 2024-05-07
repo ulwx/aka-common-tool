@@ -1784,10 +1784,9 @@ class Converter {
 				try {
 					date = formatter.parse(json.getAsString());
 				} catch (ParseException e) {
-					// TODO Auto-generated catch block
-					throw new JsonParseException(e);
+
 				}
-				return date;
+				return null;
 			}
 		}
 
@@ -1822,11 +1821,11 @@ class Converter {
 				LocalDateTime date;
 				try {
 					date = LocalDateTime.parse(json.getAsString(), CTime.DTF_YMD_HH_MM_SS_SSS);
+					return date;
 				} catch (Exception e) {
-					// TODO Auto-generated catch block
-					throw new JsonParseException(e);
+
 				}
-				return date;
+				return null;
 			}
 		}
 
@@ -1859,11 +1858,10 @@ class Converter {
 				LocalDate date;
 				try {
 					date = LocalDate.parse(json.getAsString());
+					return date;
 				} catch (Exception e) {
-					// TODO Auto-generated catch block
-					throw new JsonParseException(e);
 				}
-				return date;
+				return null;
 			}
 		}
 
@@ -1945,12 +1943,10 @@ class Converter {
 				return null;
 			} else {
 
-				LocalTime date;
+				LocalTime date=null;
 				try {
 					date = LocalTime.parse(json.getAsString());
 				} catch (Exception e) {
-					// TODO Auto-generated catch block
-					throw new JsonParseException(e);
 				}
 				return date;
 			}
@@ -2226,8 +2222,9 @@ class Converter {
 					return null;
 				}
 			} catch (Exception e) {
-				throw e;
+
 			}
+			return null;
 
 		}
 	}
@@ -2255,17 +2252,15 @@ class Converter {
 		public LocalDateTime deserialize(JsonParser p, DeserializationContext ctxt)
 				throws IOException, JsonProcessingException {
 
-			LocalDateTime date;
+			LocalDateTime date=null;
 			try {
 				if (StringUtils.hasText(p.getText())) {
 					date = LocalDateTime.parse(p.getText(), CTime.DTF_YMD_HH_MM_SS);
 					return date;
-				} else {
-					return null;
 				}
 			} catch (Exception e) {
-				throw e;
 			}
+			return null;
 
 		}
 
@@ -2304,8 +2299,9 @@ class Converter {
 					return null;
 				}
 			} catch (Exception e) {
-				throw e;
+
 			}
+			return null;
 
 		}
 
