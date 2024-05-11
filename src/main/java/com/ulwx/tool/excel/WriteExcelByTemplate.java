@@ -47,15 +47,17 @@ public class WriteExcelByTemplate {
 		try {
 			book = WorkbookFactory.create(inputStream);
 			transformer = PoiTransformer.createSxssfTransformer(book);
+			transformer.setEvaluateFormulas(true);
+			//transformer.setFullFormulaRecalculationOnOpening(true);
 			AreaBuilder areaBuilder = new XlsCommentAreaBuilder(transformer);
 			List<Area> xlsAreaList = areaBuilder.build();
 			//5.因为模板里面只有一个所以这个直接get 0
 			Area xlsArea = xlsAreaList.get(0);
 			context = new PoiContext(bean);
 			xlsArea.applyAt(new CellRef("Result!A1"), context);
-			context.getConfig().setIsFormulaProcessingRequired(false);
+			//context.getConfig().setIsFormulaProcessingRequired(true);
 			book.removeSheetAt(book.getSheetIndex(xlsArea.getStartCellRef().getSheetName()));
-			book.setForceFormulaRecalculation(true);
+			//book.setForceFormulaRecalculation(true);
 			transformer.getWorkbook().write(outStream);
 
 		} catch (Exception e) {
