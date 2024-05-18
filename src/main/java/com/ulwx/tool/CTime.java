@@ -35,6 +35,7 @@ public class CTime {
 	public static DateTimeFormatter DTF_YMD = DateTimeFormatter.ofPattern("yyyy-MM-dd");
 	public static DateTimeFormatter DTF_YMD_HH_MM_SS = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
 	public static DateTimeFormatter DTF_HH_MM_SS = DateTimeFormatter.ofPattern("HH:mm:ss");
+	public static DateTimeFormatter DTF_HH_MM = DateTimeFormatter.ofPattern("H:m");
 	public static DateTimeFormatter DTF_HH_MM_SS_SSS = DateTimeFormatter.ofPattern("HH:mm:ss.SSS");
 	public static DateTimeFormatter DTF_HHMMSSSSS = DateTimeFormatter.ofPattern("HHmmssSSS");
 	public static DateTimeFormatter DTF_YMDHHMMSS = DateTimeFormatter.ofPattern("yyyyMMddHHmmss");
