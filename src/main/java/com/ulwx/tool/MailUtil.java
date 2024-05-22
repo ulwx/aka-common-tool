@@ -30,17 +30,17 @@ public class MailUtil {
 
 	private static Logger log = LoggerFactory.getLogger(MailUtil.class);
 
-	public static void send(String smtp, String title, String content, String filename, byte[] attach,
+	public static void send(String smtp,String port, String title, String content, String filename, byte[] attach,
 			final String from, String to, final String sendPassword) {
 		List flist=new ArrayList();
 		flist.add(filename);
 		List alist=new ArrayList();
 		alist.add(attach);
-		send(smtp, title, content, flist, alist, from, to, sendPassword, "text/plain;charset=utf-8");
+		send(smtp,port, title, content, flist, alist, from, to, sendPassword, "text/plain;charset=utf-8");
 	}
-	public static void send(String smtp, String title, String content, List<String> filenameList, List<byte[]> attachList,
+	public static void send(String smtp,String port, String title, String content, List<String> filenameList, List<byte[]> attachList,
 							final String from, String to, final String sendPassword){
-		send(smtp, title, content, filenameList, attachList, from, to, sendPassword, "text/plain;charset=utf-8");
+		send(smtp,port, title, content, filenameList, attachList, from, to, sendPassword, "text/plain;charset=utf-8");
 	}
 
 	/**
@@ -63,7 +63,7 @@ public class MailUtil {
 	 *            发件人邮箱密码
 	 * @param contentType 发送的内容的Content-Type
 	 */
-	public static void send(String smtp, String title, String content, List<String> filenameList, List<byte[]> attachList,
+	public static void send(String smtp,String port, String title, String content, List<String> filenameList, List<byte[]> attachList,
 			final String from, String to, final String sendPassword, String contentType) {
 		System.setProperty("mail.mime.encodefilename", "true");
 		// 创建Properties 对象
@@ -72,6 +72,9 @@ public class MailUtil {
 		// 添加smtp服务器属性
 		if(StringUtils.hasText(smtp)) {
 			props.put("mail.smtp.host", smtp);
+		}
+		if(StringUtils.hasText(port)) {
+			props.put("mail.smtp.port", port);
 		}
 		props.put("mail.smtp.auth", "true"); // 163的stmp不是免费的也不公用的，需要验证
 
@@ -253,7 +256,7 @@ public class MailUtil {
 		String content = "测试邮件";
 		String filename = "测试邮件.csv";
 		try {
-			send(host, title, content, filename, content.getBytes("gbk"), from, to, password);
+			send(host,"", title, content, filename, content.getBytes("gbk"), from, to, password);
 		} catch (UnsupportedEncodingException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
