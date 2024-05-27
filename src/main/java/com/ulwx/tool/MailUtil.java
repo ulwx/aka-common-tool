@@ -16,9 +16,7 @@ import java.io.BufferedReader;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.UnsupportedEncodingException;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Properties;
+import java.util.*;
 
 /**
  * 邮件收发工具类
@@ -30,18 +28,25 @@ public class MailUtil {
 
 	private static Logger log = LoggerFactory.getLogger(MailUtil.class);
 
+	public static class Key{
+		public static final String FROM_NAME="FROM_NAME";
+
+	}
+
 	public static void send(String smtp,String port, String title, String content, String filename, byte[] attach,
-			final String from, String to, final String sendPassword) {
+			final String from, String to, final String sendPassword,Map<String,String> properties) {
 		List flist=new ArrayList();
 		flist.add(filename);
 		List alist=new ArrayList();
 		alist.add(attach);
-		send(smtp,port, title, content, flist, alist, from, to, sendPassword, "text/plain;charset=utf-8");
+		send(smtp,port, title, content, flist, alist, from, to, sendPassword, "text/plain;charset=utf-8",properties);
 	}
-	public static void send(String smtp,String port, String title, String content, List<String> filenameList, List<byte[]> attachList,
-							final String from, String to, final String sendPassword){
-		send(smtp,port, title, content, filenameList, attachList, from, to, sendPassword, "text/plain;charset=utf-8");
+	public static void send(String smtp,String port, String title, String content,
+							List<String> filenameList, List<byte[]> attachList,
+							final String from, String to, final String sendPassword,Map<String,String> properties){
+		send(smtp,port, title, content, filenameList, attachList, from, to, sendPassword, "text/plain;charset=utf-8",properties);
 	}
+
 
 	/**
 	 * 
@@ -63,8 +68,9 @@ public class MailUtil {
 	 *            发件人邮箱密码
 	 * @param contentType 发送的内容的Content-Type
 	 */
-	public static void send(String smtp,String port, String title, String content, List<String> filenameList, List<byte[]> attachList,
-			final String from, String to, final String sendPassword, String contentType) {
+	public static void send(String smtp, String port, String title, String content, List<String> filenameList, List<byte[]> attachList,
+							final String from, String to, final String sendPassword, String contentType,
+							Map<String,String> properties) {
 		System.setProperty("mail.mime.encodefilename", "true");
 		// 创建Properties 对象
 		Properties props = System.getProperties();
@@ -132,7 +138,7 @@ public class MailUtil {
 				// 定义邮件信息
 				MimeMessage message = new MimeMessage(session);
 				//new InternetAddress ("test@chinas.com", "这里是需要的昵称", "UTF-8")
-				message.setFrom(new InternetAddress(from));
+				message.setFrom(new InternetAddress(from,properties.get(Key.FROM_NAME),"utf-8"));
 				if(tos[i]==null || tos[i].isEmpty()){
 					continue;
 				}
@@ -256,7 +262,7 @@ public class MailUtil {
 		String content = "测试邮件";
 		String filename = "测试邮件.csv";
 		try {
-			send(host,"", title, content, filename, content.getBytes("gbk"), from, to, password);
+			send(host,"", title, content, filename, content.getBytes("gbk"), from, to, password,new HashMap<>());
 		} catch (UnsupportedEncodingException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
