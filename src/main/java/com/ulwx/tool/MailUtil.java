@@ -134,24 +134,27 @@ public class MailUtil {
 					}
 				}
 			}
+			MimeMessage message = new MimeMessage(session);
+			//new InternetAddress ("test@chinas.com", "这里是需要的昵称", "UTF-8")
+			message.setFrom(new InternetAddress(from,properties.get(Key.FROM_NAME),"utf-8"));
+
+			List<Address> addressList = new ArrayList<>();
 			for (int i = 0; i < tos.length; i++) {
 				// 定义邮件信息
-				MimeMessage message = new MimeMessage(session);
-				//new InternetAddress ("test@chinas.com", "这里是需要的昵称", "UTF-8")
-				message.setFrom(new InternetAddress(from,properties.get(Key.FROM_NAME),"utf-8"));
 				if(tos[i]==null || tos[i].isEmpty()){
 					continue;
 				}
-				message.addRecipient(Message.RecipientType.TO, new InternetAddress(tos[i]));
-				message.setSubject(title, "utf-8");
-				// message.setText(content);
-				message.setContent(mcon); // 添加文本至邮件中
-				// 发送消息
-				// session.getTransport("smtp").send(message);
-				// //也可以这样创建Transport对象
-				Transport.send(message);
-
+				Address address = new InternetAddress(tos[i], tos[i], "UTF-8");
+				addressList.add(address);
 			}
+			message.addRecipients(Message.RecipientType.TO, addressList.toArray(new Address[0]) );
+			message.setSubject(title, "utf-8");
+			// message.setText(content);
+			message.setContent(mcon); // 添加文本至邮件中
+			// 发送消息
+			// session.getTransport("smtp").send(message);
+			// //也可以这样创建Transport对象
+			Transport.send(message);
 		} catch (Exception e) {
 			throw new RuntimeException(e);
 		}
@@ -253,16 +256,16 @@ public class MailUtil {
 	}
 
 	public static void main(String[] args) {
-		String host = "smtp.163.com"; // 指定的smtp服务器
-		String from = "sunchaojin@163.com"; // 邮件发送人的邮件地址
-		String to = "sunchaojin@163.com"; // 邮件接收人的邮件地址
-		final String password = "6666"; // 发件人的邮件密码
+		String host = "smtp.qq.com"; // 指定的smtp服务器
+		String from = "2550746642@qq.com"; // 邮件发送人的邮件地址
+		String to = "2550746642@qq.com,hongyueyuan@pj-logistics.com"; // 邮件接收人的邮件地址
+		final String password = "nansdwaojqtodjfa"; // 发件人的邮件密码
 
 		String title = "测试邮件";
 		String content = "测试邮件";
 		String filename = "测试邮件.csv";
 		try {
-			send(host,"", title, content, filename, content.getBytes("gbk"), from, to, password,new HashMap<>());
+			send(host,"465", title, content, filename, content.getBytes("gbk"), from, to, password,new HashMap<>());
 		} catch (UnsupportedEncodingException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
