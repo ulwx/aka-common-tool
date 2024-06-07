@@ -102,7 +102,7 @@ public class MailUtil {
 			}
 		});
 		try {
-			String[] tos = ArrayUtils.trim(to.split(",|;|；"));
+			String[] tos = ArrayUtils.trim(to.split("，|,|;|；"));
 			MimeMultipart mcon = new MimeMultipart(); // 创建邮件体对象
 
 			if (mcon == null)
@@ -258,7 +258,7 @@ public class MailUtil {
 	public static void main(String[] args) {
 		String host = "smtp.qq.com"; // 指定的smtp服务器
 		String from = "2550746642@qq.com"; // 邮件发送人的邮件地址
-		String to = "2550746642@qq.com,hongyueyuan@pj-logistics.com"; // 邮件接收人的邮件地址
+		String to = "2550746642@qq.com，hongyueyuan@pj-logistics.com"; // 邮件接收人的邮件地址
 		final String password = "nansdwaojqtodjfa"; // 发件人的邮件密码
 
 		String title = "测试邮件";
