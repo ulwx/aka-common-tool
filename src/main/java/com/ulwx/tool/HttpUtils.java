@@ -9,7 +9,11 @@ import org.apache.http.client.utils.HttpClientUtils;
 import org.apache.http.conn.ssl.NoopHostnameVerifier;
 import org.apache.http.conn.ssl.SSLConnectionSocketFactory;
 import org.apache.http.conn.ssl.TrustStrategy;
+import org.apache.http.entity.ContentType;
+import org.apache.http.entity.mime.HttpMultipartMode;
 import org.apache.http.entity.mime.MultipartEntityBuilder;
+import org.apache.http.entity.mime.content.FileBody;
+import org.apache.http.entity.mime.content.StringBody;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClients;
 import org.apache.http.impl.client.LaxRedirectStrategy;
@@ -20,6 +24,7 @@ import org.slf4j.LoggerFactory;
 
 import java.io.File;
 import java.io.InputStream;
+import java.nio.charset.Charset;
 import java.security.cert.CertificateException;
 import java.security.cert.X509Certificate;
 import java.util.HashMap;
@@ -352,14 +357,18 @@ public class HttpUtils {
 					setSSLSocketFactory(sslsf).build();
 			
 			HttpPost httpPost = new HttpPost(postUrl);
-
-			MultipartEntityBuilder mEntityBuilder = MultipartEntityBuilder.create();
+			ContentType contentType = ContentType.create("multipart/form-data", Charset.forName("UTF-8"));
+			MultipartEntityBuilder mEntityBuilder = MultipartEntityBuilder.create().setMode(HttpMultipartMode.RFC6532);
+			mEntityBuilder.setCharset(Charset.forName("utf-8"));
+			mEntityBuilder.setContentType(contentType);
+			ContentType textContentType = ContentType.create("text/plain",Charset.forName("UTF-8"));
 			for (String param : params.keySet()) {
 				Object val = params.get(param);
 				if (val instanceof File) {
-					mEntityBuilder.addBinaryBody(param, (File) val);
+					FileBody fileBody = new FileBody((File) val);
+					mEntityBuilder.addPart(param, fileBody);
 				} else {
-					mEntityBuilder.addTextBody(param, val + "");
+					mEntityBuilder.addPart(param, new StringBody(val+"", textContentType) );
 				}
 
 			}
@@ -370,7 +379,7 @@ public class HttpUtils {
 			int statusCode = response.getStatusLine().getStatusCode();
 			if (statusCode == HttpStatus.SC_OK) {
 				HttpEntity resEntity = response.getEntity();
-				result = EntityUtils.toString(resEntity);
+				result = EntityUtils.toString(resEntity,"utf-8");
 				// 消耗掉response
 				EntityUtils.consume(resEntity);
 			}
