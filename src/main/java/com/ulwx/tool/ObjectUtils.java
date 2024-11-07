@@ -970,7 +970,7 @@ public abstract class ObjectUtils {
 				}
 			} else {
 				if (StringUtils.hasText(src)) {
-					return NumberUtils.parseNumber(src.trim(), targetClass);
+					return NumberUtils.convertNumberToTargetClass(src.trim(), targetClass);
 				} else {
 					return null;
 				}

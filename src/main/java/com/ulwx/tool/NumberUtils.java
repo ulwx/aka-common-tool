@@ -33,6 +33,11 @@ import java.text.ParseException;
 public  class NumberUtils {
 
 
+	public static Number convertNumberToTargetClass(String number,
+													Class targetClass) throws IllegalArgumentException{
+		return NumberUtils.parseNumber(number, targetClass);
+	}
+
 	/**
 	 * Convert the given number into an instance of the given target class.
 	 * 
