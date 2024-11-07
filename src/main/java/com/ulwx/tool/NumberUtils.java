@@ -174,12 +174,13 @@ public  class NumberUtils {
 		if (targetClass.equals(Byte.class) || targetClass==byte.class) {
 			return Byte.decode(trimmed);
 		} else if (targetClass.equals(Short.class)|| targetClass==short.class) {
-			return Short.decode(trimmed);
+			return Double.valueOf(trimmed).shortValue();
 		} else if (targetClass.equals(Integer.class)|| targetClass==int.class) {
-			
-			return Integer.decode(trimmed);
+			return Double.valueOf(trimmed).intValue();
+			//return Integer.decode(trimmed);
 		} else if (targetClass.equals(Long.class)|| targetClass==long.class) {
-			return Long.decode(trimmed);
+			return Double.valueOf(trimmed).longValue();
+			//return Long.decode(trimmed);
 		} else if (targetClass.equals(BigInteger.class)) {
 			return decodeBigInteger(trimmed);
 		} else if (targetClass.equals(Float.class)|| targetClass==float.class) {
