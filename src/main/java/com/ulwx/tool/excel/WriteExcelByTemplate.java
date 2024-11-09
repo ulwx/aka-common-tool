@@ -21,50 +21,58 @@ import java.util.List;
 import java.util.Map;
 
 public class WriteExcelByTemplate {
-	
-	private static final Logger log = Logger.getLogger(WriteExcelByTemplate.class);
-	public static boolean export(Map<String,Object> bean,
-			String excelTemplateFilePath, String destExcelFilePath){
-		boolean successTag = true;
-		try {
-		Context context = new Context(bean);
-		InputStream inputStream = new FileInputStream(excelTemplateFilePath);
-		OutputStream outStream = new FileOutputStream(destExcelFilePath);
-		return WriteExcelByTemplate.export(bean, inputStream, outStream);
-		} catch (Exception e) {
-			log.error("" + e,e);
-			successTag = false;
-		}
-		return successTag;
-	}
-	public static boolean export(Map<String,Object> bean,
-								 InputStream inputStream, OutputStream outStream){
-		Workbook book = null;
-		PoiTransformer  transformer = null;
-		Context context = null;
-		int rowAccessWindowSize=500;
-		boolean successTag = true;
-		try {
-			book = WorkbookFactory.create(inputStream);
-			transformer = PoiTransformer.createSxssfTransformer(book);
-			transformer.setEvaluateFormulas(true);
-			//transformer.setFullFormulaRecalculationOnOpening(true);
-			AreaBuilder areaBuilder = new XlsCommentAreaBuilder(transformer);
-			List<Area> xlsAreaList = areaBuilder.build();
-			//5.因为模板里面只有一个所以这个直接get 0
-			Area xlsArea = xlsAreaList.get(0);
-			context = new PoiContext(bean);
-			xlsArea.applyAt(new CellRef("Result!A1"), context);
-			//context.getConfig().setIsFormulaProcessingRequired(true);
-			book.removeSheetAt(book.getSheetIndex(xlsArea.getStartCellRef().getSheetName()));
-			//book.setForceFormulaRecalculation(true);
-			transformer.getWorkbook().write(outStream);
 
-		} catch (Exception e) {
-			log.error("" + e,e);
-			successTag = false;
-		}
-		return successTag;
-	}
+    private static final Logger log = Logger.getLogger(WriteExcelByTemplate.class);
+    public static boolean export(Map<String,Object> bean,
+                                 String excelTemplateFilePath, String destExcelFilePath){
+        boolean successTag = true;
+        try {
+            Context context = new Context(bean);
+            InputStream inputStream = new FileInputStream(excelTemplateFilePath);
+            OutputStream outStream = new FileOutputStream(destExcelFilePath);
+            return WriteExcelByTemplate.export(bean, inputStream, outStream);
+        } catch (Exception e) {
+            log.error("" + e,e);
+            successTag = false;
+        }
+        return successTag;
+    }
+    public static boolean export(Map<String,Object> bean,
+                                 InputStream inputStream, OutputStream outStream){
+//        Workbook book = null;
+//        PoiTransformer  transformer = null;
+//        Context context = null;
+//        int rowAccessWindowSize=500;
+//        boolean successTag = true;
+//        try {
+//            book = WorkbookFactory.create(inputStream);
+//            transformer = PoiTransformer.createSxssfTransformer(book);
+//            transformer.setEvaluateFormulas(true);
+//            //transformer.setFullFormulaRecalculationOnOpening(true);
+//            AreaBuilder areaBuilder = new XlsCommentAreaBuilder(transformer);
+//            List<Area> xlsAreaList = areaBuilder.build();
+//            //5.因为模板里面只有一个所以这个直接get 0
+//            Area xlsArea = xlsAreaList.get(0);
+//            context = new PoiContext(bean);
+//            xlsArea.applyAt(new CellRef("Result!A1"), context);
+//            //context.getConfig().setIsFormulaProcessingRequired(true);
+//            book.removeSheetAt(book.getSheetIndex(xlsArea.getStartCellRef().getSheetName()));
+//            //book.setForceFormulaRecalculation(true);
+//            transformer.getWorkbook().write(outStream);
+//
+//        } catch (Exception e) {
+//            log.error("" + e,e);
+//            successTag = false;
+//        }
+//        return successTag;
+        try {
+            Context context = new Context(bean);
+            JxlsHelper.getInstance().processTemplate(inputStream, outStream, context);
+            return true;
+        }catch (Exception e){
+            log.error("" + e,e);
+            return false;
+        }
+    }
 
 }
