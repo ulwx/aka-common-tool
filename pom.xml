@@ -185,8 +185,14 @@
 			<artifactId>carrier</artifactId>
 			<version>1.109</version>
 		</dependency>
+        <dependency>
+            <groupId>org.apache.commons</groupId>
+            <artifactId>commons-text</artifactId>
+            <version>1.10.0</version>
+            <scope>compile</scope>
+        </dependency>
 
-<!--		<dependency>-->
+        <!--		<dependency>-->
 <!--			<groupId>com.cedarsoftware</groupId>-->
 <!--			<artifactId>java-util</artifactId>-->
 <!--			<version>1.63.0</version>-->

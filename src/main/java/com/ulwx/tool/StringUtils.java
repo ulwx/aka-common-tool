@@ -17,6 +17,7 @@
 package com.ulwx.tool;
 
 import com.ulwx.type.TInteger;
+import org.apache.commons.text.StringSubstitutor;
 
 import java.security.SecureRandom;
 import java.util.*;
@@ -2949,7 +2950,11 @@ public abstract class StringUtils {
 	public static boolean isInvisibleChar(char c) {
 		return c <= ' ';
 	}
-
+	public static String  replacePlaceHolder(String templateContent, Map<String,Object> paramsMap){
+		StringSubstitutor sub = new StringSubstitutor(paramsMap);
+		String sendContent= sub.replace(templateContent);
+		return sendContent;
+	}
 	public static boolean contain(String str, String findStr,String delim){
 		String[] strs=str.split("\\"+delim);
 		strs=ArrayUtils.trim(strs);
