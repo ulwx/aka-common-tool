@@ -458,8 +458,34 @@ public class HttpUtils {
 		}
 
 	}
-	public static String post(String url, byte[] postBody, String requestContentType, String ReturnDefaultCharset,
+	public static String post(String url, byte[] postBody, Map<String,String> requestHeaders,String ReturnDefaultCharset,
 			int timeout) throws Exception {
+		long start = System.currentTimeMillis();
+		MultiThreadHttpClient client = null;
+		try {
+			client = new MultiThreadHttpClient();
+			if(requestHeaders!=null && !requestHeaders.isEmpty()) {
+				client.setRequestHeaders(requestHeaders);
+			}
+			client.setBody(postBody);
+			client.post(url, timeout, timeout);
+			return client.getString(ReturnDefaultCharset);
+
+		} catch (Exception e) {
+			log.error(":" + url , e);
+			throw e;
+		} finally {
+			if (client != null) {
+				client.closeResponse();
+				
+			}
+			log.debug("url=" + url + ";" + "参数postBody.length" + postBody.length + " 使用时间:"
+					+ (System.currentTimeMillis() - start) + "毫秒");
+		}
+
+	}
+	public static String post(String url, byte[] postBody, String requestContentType, String ReturnDefaultCharset,
+							  int timeout) throws Exception {
 		long start = System.currentTimeMillis();
 		MultiThreadHttpClient client = null;
 		try {
@@ -475,14 +501,13 @@ public class HttpUtils {
 		} finally {
 			if (client != null) {
 				client.closeResponse();
-				
+
 			}
 			log.debug("url=" + url + ";" + "参数postBody.length" + postBody.length + " 使用时间:"
 					+ (System.currentTimeMillis() - start) + "毫秒");
 		}
 
 	}
-
 	public static String poolGet(String url, String defaultCharset) throws Exception {
 		return get(url, defaultCharset);
 	}
