@@ -30,7 +30,8 @@ public class MailUtil {
 
 	public static class Key{
 		public static final String FROM_NAME="FROM_NAME";
-
+		public static final String CC_NAME="CC_NAME";
+		public static final String BCC_NAME="BCC_NAME";
 	}
 
 	public static void send(String smtp,String port, String title, String content, String filename, byte[] attach,
@@ -48,6 +49,19 @@ public class MailUtil {
 	}
 
 
+	private static Address[] getAddress(String to)throws Exception{
+		String[] tos = ArrayUtils.trim(to.split("，|,|;|；"));
+		List<Address> addressList = new ArrayList<>();
+		for (int i = 0; i < tos.length; i++) {
+			// 定义邮件信息
+			if(tos[i]==null || tos[i].isEmpty()){
+				continue;
+			}
+			Address address = new InternetAddress(StringUtils.trim(tos[i]), StringUtils.trim(tos[i]), "UTF-8");
+			addressList.add(address);
+		}
+		return addressList.toArray(new Address[0]);
+	}
 	/**
 	 * 
 	 * @param smtp
@@ -102,7 +116,7 @@ public class MailUtil {
 			}
 		});
 		try {
-			String[] tos = ArrayUtils.trim(to.split("，|,|;|；"));
+			//String[] tos = ArrayUtils.trim(to.split("，|,|;|；"));
 			MimeMultipart mcon = new MimeMultipart(); // 创建邮件体对象
 
 			if (mcon == null)
@@ -113,8 +127,6 @@ public class MailUtil {
 			mcon.addBodyPart(part);
 
 			// 设置抄送收件人
-			// message.addRecipients(Message.RecipientType.CC,new
-			// InternetAddress());
 			// 设置暗抄送人
 			// message.addRecipients(Message.RecipientType.BCC,new
 			// InternetAddress());
@@ -134,20 +146,21 @@ public class MailUtil {
 					}
 				}
 			}
-			MimeMessage message = new MimeMessage(session);
-			//new InternetAddress ("test@chinas.com", "这里是需要的昵称", "UTF-8")
-			message.setFrom(new InternetAddress(from,properties.get(Key.FROM_NAME),"utf-8"));
 
-			List<Address> addressList = new ArrayList<>();
-			for (int i = 0; i < tos.length; i++) {
-				// 定义邮件信息
-				if(tos[i]==null || tos[i].isEmpty()){
-					continue;
-				}
-				Address address = new InternetAddress(tos[i], tos[i], "UTF-8");
-				addressList.add(address);
+			MimeMessage message = new MimeMessage(session);
+			String cc=properties.get(Key.CC_NAME);
+			if(StringUtils.hasText(cc)) {
+				message.addRecipients(Message.RecipientType.CC,getAddress(cc));
 			}
-			message.addRecipients(Message.RecipientType.TO, addressList.toArray(new Address[0]) );
+			//new InternetAddress ("test@chinas.com", "这里是需要的昵称", "UTF-8")
+			String bcc=properties.get(Key.BCC_NAME);
+			if(StringUtils.hasText(bcc)) {
+				message.addRecipients(Message.RecipientType.BCC,getAddress(bcc));
+			}
+			message.setFrom(new InternetAddress(from,properties.get(Key.FROM_NAME),"utf-8"));
+			Address[] addressArray=getAddress(to);
+			message.addRecipients(Message.RecipientType.TO, addressArray);
+
 			message.setSubject(title, "utf-8");
 			// message.setText(content);
 			message.setContent(mcon); // 添加文本至邮件中
