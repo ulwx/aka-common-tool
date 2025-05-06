@@ -30,8 +30,8 @@ public class MailUtil {
 
 	public static class Key{
 		public static final String FROM_NAME="FROM_NAME";
-		public static final String CC_NAME="CC_NAME";
-		public static final String BCC_NAME="BCC_NAME";
+		public static final String CC="CC";
+		public static final String BCC="BCC";
 	}
 
 	public static void send(String smtp,String port, String title, String content, String filename, byte[] attach,
@@ -148,12 +148,12 @@ public class MailUtil {
 			}
 
 			MimeMessage message = new MimeMessage(session);
-			String cc=properties.get(Key.CC_NAME);
+			String cc=properties.get(Key.CC);
 			if(StringUtils.hasText(cc)) {
 				message.addRecipients(Message.RecipientType.CC,getAddress(cc));
 			}
 			//new InternetAddress ("test@chinas.com", "这里是需要的昵称", "UTF-8")
-			String bcc=properties.get(Key.BCC_NAME);
+			String bcc=properties.get(Key.BCC);
 			if(StringUtils.hasText(bcc)) {
 				message.addRecipients(Message.RecipientType.BCC,getAddress(bcc));
 			}
