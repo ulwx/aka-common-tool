@@ -548,7 +548,8 @@ public class HttpUtils {
 		return HttpUtils.get(url, defaultCharset, requestHeaders, null);
 
 	}
-	public static String get(String url, String defaultCharset, Map<String, String> requestHeaders, Map<String, String> responseHeaders) throws Exception {
+	public static String get(String url, String defaultCharset,
+							 Map<String, String> requestHeaders, Map<String, String> responseHeaders) throws Exception {
 		long start = System.currentTimeMillis();
 		MultiThreadHttpClient client = null;
 		try {
@@ -715,7 +716,29 @@ public class HttpUtils {
 		}
 
 	}
+	public static String get(String url, String defaultCharset,Map<String, String> requestHeaders,
+							 int timeout) throws Exception {
+		long start = System.currentTimeMillis();
+		MultiThreadHttpClient client = null;
+		try {
+			client = new MultiThreadHttpClient();
+			client.setRequestHeaders(requestHeaders);
+			client.get(url, timeout, timeout);
+			return client.getString(defaultCharset);
 
+		} catch (Exception e) {
+			log.error(":" + url + ":defaultCharset=" + defaultCharset, e);
+			throw e;
+		} finally {
+			if (client != null) {
+				client.closeResponse();
+
+			}
+
+			log.debug("url=" + url + ";" + " 使用时间:" + (System.currentTimeMillis() - start) + "毫秒");
+		}
+
+	}
 	public static void main(String[] args) throws Exception {
 
 		String url = "http://61.221.181.18";

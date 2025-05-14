@@ -260,7 +260,22 @@ public class MathUtil {
 		return b.setScale(scale, BigDecimal.ROUND_HALF_UP).doubleValue();
 
 	}
+	public static double round(double v, int scale, int roundingMode) {
 
+		if (scale < 0)
+
+		{
+
+			throw new IllegalArgumentException(
+					"The scale must be a positive integer or zero");
+
+		}
+
+		BigDecimal b = new BigDecimal(Double.toString(v));
+		//BigDecimal.ROUND_HALF_UP
+		return b.setScale(scale, roundingMode).doubleValue();
+
+	}
 	public static double max(double[] numbers) {
 		Max max = new Max();
 		return max.evaluate(numbers, 0, numbers.length);
