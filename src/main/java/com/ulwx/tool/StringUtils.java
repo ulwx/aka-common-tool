@@ -1010,7 +1010,18 @@ public abstract class StringUtils {
 		str2=str2.replaceAll("(\\u00A0+)$","");
 		return str2;
 	}
-
+	public static String trim(Object str, String defaultValue) {
+		if(str==null){
+			return defaultValue;
+		}
+		String str2= org.apache.commons.lang3.StringUtils.trimToEmpty(str.toString());
+		str2=str2.replaceAll("^(\\u00A0+)","");
+		str2=str2.replaceAll("(\\u00A0+)$","");
+		if(StringUtils.isEmpty(str2)){
+			return defaultValue;
+		}
+		return str2;
+	}
 	/**
 	 * 如果str为空或者长度为0，返回缺省值
 	 * 
