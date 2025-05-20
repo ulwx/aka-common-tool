@@ -83,6 +83,9 @@ public abstract class ObjectUtils {
 		simpleType.add(float.class);
 		simpleType.add(Double.class);
 		simpleType.add(double.class);
+		simpleType.add(LocalDate.class);
+		simpleType.add(LocalDateTime.class);
+		simpleType.add(LocalTime.class);
 		simpleType.add(java.util.Date.class);
 
 	}
@@ -968,7 +971,32 @@ public abstract class ObjectUtils {
 				} catch (Exception e) {
 					return null;
 				}
-			} else {
+			}
+			else if (targetClass == LocalDate.class) {
+				try {
+					if (StringUtils.hasText(src))
+						return CTime.parseToLocalDate(src);
+				} catch (Exception e) {
+					return null;
+				}
+			}
+			else if (targetClass == LocalDateTime.class) {
+				try {
+					if (StringUtils.hasText(src))
+						return CTime.parseToLocalDateTimeWithCommon(src);
+				} catch (Exception e) {
+					return null;
+				}
+			}
+			else if (targetClass == LocalTime.class) {
+				try {
+					if (StringUtils.hasText(src))
+						return CTime.parseToLocalTime(src);
+				} catch (Exception e) {
+					return null;
+				}
+			}
+			else {
 				if (StringUtils.hasText(src)) {
 					return NumberUtils.convertNumberToTargetClass(src.trim(), targetClass);
 				} else {
