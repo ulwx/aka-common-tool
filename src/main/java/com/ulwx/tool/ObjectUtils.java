@@ -33,6 +33,7 @@ import com.google.gson.*;
 import com.rits.cloning.Cloner;
 import com.ulwx.tool.deepequal.DeepEquals;
 import com.ulwx.type.TInteger;
+import org.apache.commons.lang3.reflect.FieldUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -342,7 +343,7 @@ public abstract class ObjectUtils {
 		Map<String, Object> map = new HashMap<String, Object>();
 
 		Class cls = obj.getClass();
-		Field[] fields = cls.getDeclaredFields();
+		Field[] fields = FieldUtils.getAllFields(cls);
 		for (Field field : fields) {
 			field.setAccessible(true);
 			try {
@@ -363,7 +364,8 @@ public abstract class ObjectUtils {
 		Map<String, Object> map = new HashMap<String, Object>();
 
 		Class cls = obj.getClass();
-		Field[] fields = cls.getDeclaredFields();
+		//Field[] fields = cls.getDeclaredFields();
+		Field[] fields = FieldUtils.getAllFields(cls);
 		for (Field field : fields) {
 			field.setAccessible(true);
 			try {
