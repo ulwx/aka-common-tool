@@ -377,6 +377,9 @@ public class RequestUtils {
 			if (value == null) {
 				return new String[0];
 			}
+			if(value.length==1 && (value[0]==null ||  value[0].equals("null"))){
+				return new String[0];
+			}
 			if (value.getClass().getComponentType() == String.class) {
 				return (String[]) value;
 			} else {
