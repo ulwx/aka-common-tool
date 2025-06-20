@@ -1900,7 +1900,40 @@ public abstract class StringUtils {
 		}
 		return ArrayUtils.toString(arr, delim);
 	}
+	/**
+	 * 返回第一个非null的对象
+	 * @param values 可变参数列表
+	 * @param <T> 泛型类型
+	 * @return 第一个非null的值，如果全部为null则返回null
+	 */
+	@SafeVarargs
+	public static <T> T coalesce(T... values) {
+		if (values == null) {
+			return null;
+		}
 
+		for (T value : values) {
+			if (value != null) {
+				return value;
+			}
+		}
+
+		return null;
+	}
+	public static String joinSkipEmpty(String... strings) {
+		if (strings == null || strings.length == 0) {
+			return "";
+		}
+
+		List<String> validStrings = new ArrayList<>();
+		for (String str : strings) {
+			if (str != null && !str.trim().isEmpty()) {
+				validStrings.add(str.trim());
+			}
+		}
+
+		return String.join(",", validStrings);
+	}
 	/**
 	 * 查找src字符串里匹配于regex的模式串，然后对模式串里的子模式串（通过组号来识别）进行处理(handler)，
 	 * 处理后的结果替换掉原来模式串(regex匹配的字符串)的位置

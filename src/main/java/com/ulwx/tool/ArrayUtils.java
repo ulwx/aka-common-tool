@@ -1016,7 +1016,26 @@ public class ArrayUtils {
 		}
 
 	}
+	/**
+	 * 返回第一个非null的对象
+	 * @param values 可变参数列表
+	 * @param <T> 泛型类型
+	 * @return 第一个非null的值，如果全部为null则返回null
+	 */
+	@SafeVarargs
+	public static <T> T coalesce(T... values) {
+		if (values == null) {
+			return null;
+		}
 
+		for (T value : values) {
+			if (value != null) {
+				return value;
+			}
+		}
+
+		return null;
+	}
 	public static String toString(Object array, String delimiterStr) {
 		
 		if(array==null) {
