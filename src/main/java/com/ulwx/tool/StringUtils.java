@@ -1906,14 +1906,14 @@ public abstract class StringUtils {
 	 * @param <T> 泛型类型
 	 * @return 第一个非null的值，如果全部为null则返回null
 	 */
-	@SafeVarargs
-	public static <T> T coalesce(T... values) {
+
+	public static String coalesce(String... values) {
 		if (values == null) {
 			return null;
 		}
-
-		for (T value : values) {
-			if (value != null) {
+		for (String value : values) {
+			value=StringUtils.trim(value);
+			if (StringUtils.hasText(value)) {
 				return value;
 			}
 		}
