@@ -57,8 +57,10 @@ public class MailUtil {
 			if(tos[i]==null || tos[i].isEmpty()){
 				continue;
 			}
-			Address address = new InternetAddress(StringUtils.trim(tos[i]), StringUtils.trim(tos[i]), "UTF-8");
-			addressList.add(address);
+			if(ValidationUtils.isEmail(StringUtils.trim(tos[i]))) {
+				Address address = new InternetAddress(StringUtils.trim(tos[i]), StringUtils.trim(tos[i]), "UTF-8");
+				addressList.add(address);
+			}
 		}
 		return addressList.toArray(new Address[0]);
 	}
