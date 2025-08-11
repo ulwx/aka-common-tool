@@ -10,14 +10,70 @@ import org.xerial.snappy.Snappy;
 
 import java.io.*;
 import java.util.Enumeration;
-import java.util.zip.Deflater;
-import java.util.zip.GZIPInputStream;
-import java.util.zip.GZIPOutputStream;
-import java.util.zip.Inflater;
+import java.util.zip.*;
 
 public class ZipUtils {
 	private static final Logger log = LoggerFactory.getLogger(ZipUtils.class);
+	/**
+	 * 压缩多个文件到一个zip文件
+	 * @param files   要压缩的文件路径数组
+	 * @param zipFile 输出的zip文件路径
+	 * @throws IOException
+	 */
+	public static void zipFiles(String[] files, String zipFile) throws IOException {
+		try (FileOutputStream fos = new FileOutputStream(zipFile);
+			 ZipOutputStream zos = new ZipOutputStream(fos)) {
 
+			byte[] buffer = new byte[1024];
+
+			for (String filePath : files) {
+				File file = new File(filePath);
+				if (!file.exists() || file.isDirectory()) {
+					System.out.println("跳过不存在或是目录的文件：" + filePath);
+					continue;
+				}
+
+				try (FileInputStream fis = new FileInputStream(file)) {
+					// 添加 Zip 条目
+					zos.putNextEntry(new ZipEntry(file.getName()));
+
+					int len;
+					while ((len = fis.read(buffer)) > 0) {
+						zos.write(buffer, 0, len);
+					}
+
+					zos.closeEntry();
+				}
+			}
+		}
+	}
+
+	public static void zipFiles(File[] files, File zipFile) throws IOException {
+		try (FileOutputStream fos = new FileOutputStream(zipFile);
+			 ZipOutputStream zos = new ZipOutputStream(fos)) {
+
+			byte[] buffer = new byte[1024];
+
+			for (File fileElm : files) {
+				File file = fileElm;
+				if (!file.exists() || file.isDirectory()) {
+					continue;
+				}
+
+				try (FileInputStream fis = new FileInputStream(file)) {
+					// 添加 Zip 条目
+					zos.putNextEntry(new ZipEntry(file.getName()));
+
+					int len;
+					while ((len = fis.read(buffer)) > 0) {
+						zos.write(buffer, 0, len);
+					}
+
+					zos.closeEntry();
+				}
+			}
+		}
+	}
 	public static byte[] gzip(byte[] bs) throws Exception {
 		ByteArrayOutputStream bout = new ByteArrayOutputStream(1000);
 		GZIPOutputStream gzout = null;
