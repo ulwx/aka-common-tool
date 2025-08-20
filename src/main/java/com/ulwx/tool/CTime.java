@@ -837,7 +837,9 @@ public class CTime {
 	public static String formatLocalDateTime(LocalDateTime lt) {
 		return lt.format(DTF_YMD_HH_MM_SS_SSS);
 	}
-
+	public static String formatLocalDateTime(LocalDateTime lt, DateTimeFormatter format) {
+		return lt.format(format);
+	}
 	public static String formatLocalDateTime() {
 		return LocalDateTime.now().format(DTF_YMD_HH_MM_SS_SSS);
 	}
