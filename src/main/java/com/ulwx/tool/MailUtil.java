@@ -109,7 +109,7 @@ public class MailUtil {
 		} catch (Exception e) {
 			log.error("", e);
 		}
-
+		props.put("mail.smtp.sendpartial", "true");
 		// 创建邮件会话
 		Session session = Session.getDefaultInstance(props, new Authenticator() { // 验账账户
 			@Override
