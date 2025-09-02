@@ -179,6 +179,9 @@ public class MailUtil {
 				log.error("成功发送的：" + Arrays.toString(validSent));
 				log.error("未发送的：" + Arrays.toString(validUnsent));
 				log.error("无效地址：" + Arrays.toString(invalid));
+				if(validSent!=null && validSent.length>0) {
+					return;
+				}
 			}
 			throw new RuntimeException(e);
 		}
