@@ -171,6 +171,15 @@ public class MailUtil {
 			// //也可以这样创建Transport对象
 			Transport.send(message);
 		} catch (Exception e) {
+			if(e instanceof SendFailedException ) {
+				SendFailedException e2 = (SendFailedException)e;
+				Address[] validUnsent = e2.getValidUnsentAddresses();
+				Address[] validSent = e2.getValidSentAddresses();
+				Address[] invalid = e2.getInvalidAddresses();
+				log.error("成功发送的：" + Arrays.toString(validSent));
+				log.error("未发送的：" + Arrays.toString(validUnsent));
+				log.error("无效地址：" + Arrays.toString(invalid));
+			}
 			throw new RuntimeException(e);
 		}
 	}
