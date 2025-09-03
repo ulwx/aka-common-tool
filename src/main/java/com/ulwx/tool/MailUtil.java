@@ -159,7 +159,11 @@ public class MailUtil {
 			if(StringUtils.hasText(bcc)) {
 				message.addRecipients(Message.RecipientType.BCC,getAddress(bcc));
 			}
-			message.setFrom(new InternetAddress(from,properties.get(Key.FROM_NAME),"utf-8"));
+			InternetAddress fromAddr = new InternetAddress(from);
+//			if(StringUtils.hasText(properties.get(Key.FROM_NAME))) {
+//				fromAddr=new InternetAddress(from,properties.get(Key.FROM_NAME));
+//			}
+			message.setFrom(fromAddr);
 			Address[] addressArray=getAddress(to);
 			message.addRecipients(Message.RecipientType.TO, addressArray);
 
