@@ -51,6 +51,7 @@ public class MailUtil {
 
 	private static Address[] getAddress(String to)throws Exception{
 		String[] tos = ArrayUtils.trim(to.split("，|,|;|；"));
+		tos=ArrayUtils.removeDuplicateElements(tos);
 		List<Address> addressList = new ArrayList<>();
 		for (int i = 0; i < tos.length; i++) {
 			// 定义邮件信息
@@ -114,6 +115,7 @@ public class MailUtil {
 		Session session = Session.getDefaultInstance(props, new Authenticator() { // 验账账户
 			@Override
 			public PasswordAuthentication getPasswordAuthentication() {
+				log.debug("auth from="+from+",sendPassword="+sendPassword);
 				return new PasswordAuthentication(from, sendPassword);
 			}
 		});
@@ -159,6 +161,7 @@ public class MailUtil {
 			if(StringUtils.hasText(bcc)) {
 				message.addRecipients(Message.RecipientType.BCC,getAddress(bcc));
 			}
+			log.debug("from=="+from);
 			InternetAddress fromAddr = new InternetAddress(from);
 //			if(StringUtils.hasText(properties.get(Key.FROM_NAME))) {
 //				fromAddr=new InternetAddress(from,properties.get(Key.FROM_NAME));
@@ -171,9 +174,10 @@ public class MailUtil {
 			// message.setText(content);
 			message.setContent(mcon); // 添加文本至邮件中
 			// 发送消息
-			// session.getTransport("smtp").send(message);
+			 session.getTransport(smtp).send(message);
 			// //也可以这样创建Transport对象
-			Transport.send(message);
+			//Transport.send(message);
+
 		} catch (Exception e) {
 			if(e instanceof SendFailedException ) {
 				SendFailedException e2 = (SendFailedException)e;
