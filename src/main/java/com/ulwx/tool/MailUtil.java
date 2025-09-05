@@ -174,7 +174,7 @@ public class MailUtil {
 			// message.setText(content);
 			message.setContent(mcon); // 添加文本至邮件中
 			// 发送消息
-			 session.getTransport(smtp).send(message);
+			 session.getTransport("smtp").send(message);
 			// //也可以这样创建Transport对象
 			//Transport.send(message);
 
