@@ -112,7 +112,7 @@ public class MailUtil {
 		}
 		props.put("mail.smtp.sendpartial", "true");
 		// 创建邮件会话
-		Session session = Session.getDefaultInstance(props, new Authenticator() { // 验账账户
+		Session session = Session.getInstance(props, new Authenticator() { // 验账账户
 			@Override
 			public PasswordAuthentication getPasswordAuthentication() {
 				log.debug("auth from="+from+",sendPassword="+sendPassword);
