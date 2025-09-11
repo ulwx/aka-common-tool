@@ -174,7 +174,7 @@ public class MailUtil {
 			// message.setText(content);
 			message.setContent(mcon); // 添加文本至邮件中
 			// 发送消息
-			 session.getTransport("smtp").send(message);
+			session.getTransport("smtp").send(message);
 			// //也可以这样创建Transport对象
 			//Transport.send(message);
 
@@ -194,6 +194,7 @@ public class MailUtil {
 			throw new RuntimeException(e);
 		}
 	}
+
 
 	public static void receive(String host, String username, String password) {
 		Store store = null;
@@ -291,10 +292,10 @@ public class MailUtil {
 	}
 
 	public static void main(String[] args) {
-		String host = "smtp.qq.com"; // 指定的smtp服务器
-		String from = "2550746642@qq.com"; // 邮件发送人的邮件地址
-		String to = "2550746642@qq.com，hongyueyuan@pj-logistics.com"; // 邮件接收人的邮件地址
-		final String password = "nansdwaojqtodjfa"; // 发件人的邮件密码
+		String host = "smtp.exmail.qq.com"; // 指定的smtp服务器
+		String from = "technology@pj-logistics.com"; // 邮件发送人的邮件地址
+		String to = "sunchaojin@pj-logistics.com"; // 邮件接收人的邮件地址
+		final String password = "PHzeqpgc36fDTuJE"; // 发件人的邮件密码
 
 		String title = "测试邮件";
 		String content = "测试邮件";
