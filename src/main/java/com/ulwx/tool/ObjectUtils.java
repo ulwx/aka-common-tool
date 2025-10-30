@@ -48,6 +48,7 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.*;
+import java.util.function.Consumer;
 
 
 /**
@@ -1531,11 +1532,19 @@ public abstract class ObjectUtils {
 	public static <T> T CloneWithDeep(T object) {
 
 		Cloner cloner = new Cloner();
+		cloner.setNullTransient(true);
+		cloner.registerConstant(object.getClass(),"serialVersionUID");
 		return cloner.deepClone(object);
 
-		// return org.apache.commons.lang.ObjectUtils.clone(obj);
 	}
+	public static <T> T CloneWithDeep(T object, Consumer<Cloner> setter) {
 
+		Cloner cloner = new Cloner();
+		cloner.setNullTransient(true);
+		setter.accept(cloner);
+		return cloner.deepClone(object);
+
+	}
 	/**
 	 * 反射机制实现的深拷贝
 	 * 
@@ -1547,11 +1556,10 @@ public abstract class ObjectUtils {
 	public static <T> T CloneWithDeep(T object, java.lang.Class<?>... c) {
 
 		Cloner cloner = new Cloner();
-		// cloner.dontClone(c);
+		cloner.registerConstant(object.getClass(),"serialVersionUID");
 		cloner.nullInsteadOfClone(c);
 		return cloner.deepClone(object);
 
-		// return org.apache.commons.lang.ObjectUtils.clone(obj);
 	}
 
 	public static String toString(Object obj) {
