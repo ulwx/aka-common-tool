@@ -1533,7 +1533,6 @@ public abstract class ObjectUtils {
 
 		Cloner cloner = new Cloner();
 		cloner.setNullTransient(true);
-		cloner.registerConstant(object.getClass(),"serialVersionUID");
 		return cloner.deepClone(object);
 
 	}
