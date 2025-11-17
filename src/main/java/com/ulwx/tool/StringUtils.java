@@ -1934,6 +1934,11 @@ public abstract class StringUtils {
 
 		return String.join(",", validStrings);
 	}
+	public static String joinSkipEmpty(String strings) {
+		String str=StringUtils.joinSkipEmpty(StringUtils.splitByCommasToList(strings)
+				.toArray(new String[0]));
+		return str;
+	}
 	/**
 	 * 查找src字符串里匹配于regex的模式串，然后对模式串里的子模式串（通过组号来识别）进行处理(handler)，
 	 * 处理后的结果替换掉原来模式串(regex匹配的字符串)的位置
@@ -2993,6 +2998,25 @@ public abstract class StringUtils {
 	 */
 	public static boolean isInvisibleChar(char c) {
 		return c <= ' ';
+	}
+
+	public static List<String> splitByCommasToList(String input) {
+		List<String> result = new ArrayList<>();
+		if (input == null || input.trim().isEmpty()) {
+			return result;
+		}
+		String cleanedInput = input.replaceAll("\\r?\\n", "");
+		// 分割字符串
+		String[] parts = cleanedInput.split("[,，;；]");
+
+		for (String part : parts) {
+			String trimmed = part.trim();
+			if (!trimmed.isEmpty()) {
+				result.add(trimmed);
+			}
+		}
+
+		return result;
 	}
 	public static String  replacePlaceHolder(String templateContent, Map<String,Object> paramsMap){
 		StringSubstitutor sub = new StringSubstitutor(paramsMap);
