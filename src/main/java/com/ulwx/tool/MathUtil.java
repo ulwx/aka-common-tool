@@ -488,7 +488,8 @@ public class MathUtil {
 //		if(d1==d2) {
 //			System.out.println("s"+true);
 //		}
-		
+
+		System.out.println(formatDouble(129.12*1234.45,0));
 	}
 
 }
