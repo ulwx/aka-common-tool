@@ -3,6 +3,7 @@ package com.ulwx.tool;
 import com.ulwx.tool.http.MultiThreadHttpClient;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpStatus;
+import org.apache.http.client.config.RequestConfig;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.client.utils.HttpClientUtils;
@@ -335,8 +336,10 @@ public class HttpUtils {
 		}
 
 	}
-
 	public static String postFiles(String postUrl, Map<String, Object> params) throws Exception {
+		return postFiles(postUrl, params, 1000*60);
+	}
+	public static String postFiles(String postUrl, Map<String, Object> params,int timeout) throws Exception {
 		CloseableHttpClient httpclient = null;
 		CloseableHttpResponse response = null;
 		String result = null;
@@ -353,9 +356,19 @@ public class HttpUtils {
 			SSLConnectionSocketFactory sslsf = new SSLConnectionSocketFactory(builder.build(),
 					new String[] { "SSLv2Hello", "SSLv3", "TLSv1", "TLSv1.2" }, null, NoopHostnameVerifier.INSTANCE);
 			LaxRedirectStrategy redirectStrategy = new LaxRedirectStrategy();  
-			httpclient= HttpClients.custom().setRedirectStrategy(redirectStrategy).
-					setSSLSocketFactory(sslsf).build();
-			
+
+			RequestConfig requestConfig = RequestConfig.custom()
+					.setConnectTimeout(timeout)        // 连接超时时间，单位毫秒
+					.setSocketTimeout(timeout)        // 读取超时时间，单位毫秒
+					.setConnectionRequestTimeout(timeout) // 从连接池获取连接的超时时间，单位毫秒
+					.build();
+//			httpclient= HttpClients.custom().setRedirectStrategy(redirectStrategy).
+//					setSSLSocketFactory(sslsf).build();
+			httpclient = HttpClients.custom()
+					.setRedirectStrategy(redirectStrategy)
+					.setSSLSocketFactory(sslsf)
+					.setDefaultRequestConfig(requestConfig)  // 设置默认请求配置
+					.build();
 			HttpPost httpPost = new HttpPost(postUrl);
 			ContentType contentType = ContentType.create("multipart/form-data", Charset.forName("UTF-8"));
 			MultipartEntityBuilder mEntityBuilder = MultipartEntityBuilder.create().setMode(HttpMultipartMode.RFC6532);
