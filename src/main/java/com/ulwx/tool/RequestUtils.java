@@ -526,7 +526,9 @@ public class RequestUtils {
 		Object[] value = rParms.get(name);
 		if (value == null)
 			return null;
-
+		if(value.length==1 && (value[0]==null ||  value[0].equals("null") ||value[0].equals("") )){
+			return new Date[0];
+		}
 		if (value.getClass().getComponentType() == Date.class) {
 			return (Date[]) value;
 		} else {
@@ -547,7 +549,9 @@ public class RequestUtils {
 		Object[] value = rParms.get(name);
 		if (value == null)
 			return null;
-
+		if(value.length==1 && (value[0]==null ||  value[0].equals("null") ||value[0].equals("") )){
+			return new LocalDate[0];
+		}
 		if (value.getClass().getComponentType() == LocalDate.class) {
 			return (LocalDate[]) value;
 		} else {
@@ -568,6 +572,9 @@ public class RequestUtils {
 		Object[] value = rParms.get(name);
 		if (value == null)
 			return null;
+		if(value.length==1 && (value[0]==null ||  value[0].equals("null") ||value[0].equals("") )){
+			return new LocalTime[0];
+		}
 		if (value.getClass().getComponentType() == LocalTime.class) {
 			return (LocalTime[]) value;
 		} else {
@@ -588,6 +595,9 @@ public class RequestUtils {
 		Object[] value = rParms.get(name);
 		if (value == null)
 			return null;
+		if(value.length==1 && (value[0]==null ||  value[0].equals("null") ||value[0].equals("") )){
+			return new LocalDateTime[0];
+		}
 		if (value.getClass().getComponentType() == LocalDateTime.class) {
 			return (LocalDateTime[]) value;
 		} else {
@@ -654,6 +664,10 @@ public class RequestUtils {
 		Object[] value = rParms.get(name);
 		if (value == null)
 			return null;
+
+		if(value.length==1 && (value[0]==null ||  value[0].equals("null") ||value[0].equals("") )){
+			return new Integer[0];
+		}
 		if (value.getClass().getComponentType() == Integer.class) {
 			return (Integer[]) value;
 		} else {
@@ -663,7 +677,6 @@ public class RequestUtils {
 					res[i] = Integer.parseInt(value[i].toString().trim());
 				} catch (Exception e) {
 					// TODO Auto-generated catch block
-
 					res[i] = null;
 				}
 			}
@@ -676,6 +689,9 @@ public class RequestUtils {
 		Object[] value = rParms.get(name);
 		if (value == null)
 			return null;
+		if(value.length==1 && (value[0]==null ||  value[0].equals("null") ||value[0].equals("") )){
+			return new Long[0];
+		}
 		if (value.getClass().getComponentType() == Long.class) {
 			return (Long[]) value;
 		} else {
@@ -698,6 +714,9 @@ public class RequestUtils {
 		Object[] value = rParms.get(name);
 		if (value == null)
 			return null;
+		if(value.length==1 && (value[0]==null ||  value[0].equals("null") ||value[0].equals("") )){
+			return new Boolean[0];
+		}
 		if (value.getClass().getComponentType() == Boolean.class) {
 			return (Boolean[]) value;
 		} else {
@@ -719,6 +738,9 @@ public class RequestUtils {
 		Object[] value = rParms.get(name);
 		if (value == null)
 			return null;
+		if(value.length==1 && (value[0]==null ||  value[0].equals("null") ||value[0].equals("") )){
+			return new Byte[0];
+		}
 		if (value.getClass().getComponentType() == Byte.class) {
 			return (Byte[]) value;
 		} else {
@@ -740,6 +762,9 @@ public class RequestUtils {
 		Object[] value = rParms.get(name);
 		if (value == null)
 			return null;
+		if(value.length==1 && (value[0]==null ||  value[0].equals("null") ||value[0].equals("") )){
+			return new Double[0];
+		}
 		if (value.getClass().getComponentType() == Double.class) {
 			return (Double[]) value;
 		} else {
@@ -761,6 +786,9 @@ public class RequestUtils {
 		Object[] value = rParms.get(name);
 		if (value == null)
 			return null;
+		if(value.length==1 && (value[0]==null ||  value[0].equals("null") ||value[0].equals("") )){
+			return new Float[0];
+		}
 		if (value.getClass().getComponentType() == Float.class) {
 			return (Float[]) value;
 		} else {
