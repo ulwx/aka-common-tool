@@ -31,6 +31,7 @@ import org.apache.http.impl.conn.PoolingHttpClientConnectionManager;
 import org.apache.http.message.BasicHeader;
 import org.apache.http.message.BasicNameValuePair;
 import org.apache.http.protocol.HttpContext;
+import org.apache.http.ssl.SSLContexts;
 import org.apache.http.util.EntityUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -126,69 +127,35 @@ public class MultiThreadHttpClient {
 		proxy= new HttpHost(host, port,"http");  
 
 	}
-	
-	
+
+
 	private static CloseableHttpClient getClient(int maxTotalConnections) {
-	    try {
-	        // 在调用SSL之前需要重写验证方法，取消检测SSL
-	        X509TrustManager trustManager = new X509TrustManager() {
-	            @Override public X509Certificate[] getAcceptedIssuers() {
-	                return null;
-	            }
-	            @Override public void checkClientTrusted(X509Certificate[] xcs, String str) {}
-	            @Override public void checkServerTrusted(X509Certificate[] xcs, String str) {}
-	        };
-	        
-	        SSLContext ctx = SSLContext.getInstance("TLSv1.2");
-	        ctx.init(null, new TrustManager[] { trustManager }, new SecureRandom());
-	
-	        // 自定义 SSLConnectionSocketFactory，禁用会话恢复
-	        SSLConnectionSocketFactory socketFactory = new SSLConnectionSocketFactory(ctx, 
-	            new String[] { "TLSv1.2", "TLSv1.3" },
-	            null,
-	            NoopHostnameVerifier.INSTANCE) {
-	            
-	            @Override
-	            protected void prepareSocket(SSLSocket socket) throws IOException {
-	                // 禁用 SSL 会话恢复
-	                socket.setEnableSessionCreation(false);
-	                super.prepareSocket(socket);
-	            }
-	            
-	            @Override
-	            public Socket createLayeredSocket(Socket socket, String target, int port, HttpContext context) throws IOException {
-	                SSLSocket sslSocket = (SSLSocket) super.createLayeredSocket(socket, target, port, context);
-	                // 禁用 SSL 会话恢复
-	                sslSocket.setEnableSessionCreation(false);
-	                return sslSocket;
-	            }
-	        };
-	
-	        Registry<ConnectionSocketFactory> registry = RegistryBuilder.<ConnectionSocketFactory>create()
-	                .register("http", PlainConnectionSocketFactory.INSTANCE)
-	                .register("https", socketFactory)
-	                .build();
-	
-	        PoolingHttpClientConnectionManager connManager = new PoolingHttpClientConnectionManager(registry);
-	        connManager.setMaxTotal(maxTotalConnections);
-	        connManager.setDefaultMaxPerRoute(maxTotalConnections / 2);
-	        connManager.setValidateAfterInactivity(5000);
-	        
-	        LaxRedirectStrategy redirectStrategy = new LaxRedirectStrategy();  
-	
-	        CloseableHttpClient httpClient = HttpClients.custom()
-	                .setConnectionManager(connManager)
-	                .setRedirectStrategy(redirectStrategy)
-	                .build();
-	
-	        connEvictor = new IdleConnectionMonitorThread(connManager);
-	        connEvictor.setDaemon(true);
-	        connEvictor.start();
-	        return httpClient;
-	    } catch (Exception e) {
-	        log.error("", e);
-	    }
-	    return null;
+		try {
+			// 跳过 SSL 验证
+			SSLContext sslContext = SSLContexts.custom()
+					.loadTrustMaterial((chain, authType) -> true)
+					.build();
+
+			SSLConnectionSocketFactory socketFactory = new SSLConnectionSocketFactory(
+					sslContext,
+					NoopHostnameVerifier.INSTANCE
+			);
+
+			PoolingHttpClientConnectionManager connManager =
+					new PoolingHttpClientConnectionManager();
+			connManager.setMaxTotal(maxTotalConnections);
+			connManager.setDefaultMaxPerRoute(maxTotalConnections / 2);
+
+			return HttpClients.custom()
+					.setSSLSocketFactory(socketFactory)
+					.setConnectionManager(connManager)
+					.setRedirectStrategy(new LaxRedirectStrategy())
+					.build();
+
+		} catch (Exception e) {
+			log.error("创建HTTP客户端失败", e);
+			return null;
+		}
 	}
 
 	public void setRequestHeaders(Map<String, String> headers) {
