@@ -33,6 +33,7 @@ public class CTime {
 	// 用于LocalDate，LocalDateTime，LocalTime的格式
 	public static DateTimeFormatter DTF_YMD_HH_MM_SS_SSS = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss[.SSS]");
 	public static DateTimeFormatter DTF_YMD = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+	public static DateTimeFormatter DTF_YM = DateTimeFormatter.ofPattern("yyyy-MM");
 	public static DateTimeFormatter DTF_YMD_HH_MM_SS = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
 	public static DateTimeFormatter DTF_HH_MM_SS = DateTimeFormatter.ofPattern("HH:mm:ss");
 	public static DateTimeFormatter DTF_HH_MM = DateTimeFormatter.ofPattern("H:m");
@@ -287,6 +288,8 @@ public class CTime {
 
 	}
 
+
+
 	public static String getMM(String wholeDate) {
 		Assert.notNull(wholeDate, "time string is null");
 		wholeDate = wholeDate.trim();
@@ -300,6 +303,7 @@ public class CTime {
 		// yyyy-MM-dd HH:mm:ss.sss
 		return wholeDate.substring(8, 10);
 	}
+
 
 	public static String getYYYY() {
 		return getYYYY(getCurrentDateTime());
