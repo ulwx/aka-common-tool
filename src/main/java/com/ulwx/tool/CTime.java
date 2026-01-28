@@ -42,22 +42,25 @@ public class CTime {
 	public static DateTimeFormatter DTF_YMDHHMMSSSSS = DateTimeFormatter.ofPattern("yyyyMMddHHmmssSSS");
 	public static DateTimeFormatter DTF_YYMMDD = DateTimeFormatter.ofPattern("yyyyMMdd");
 	public static DateTimeFormatter DTF_COMMON_DT = new DateTimeFormatterBuilder()
-											.appendPattern("yyyy-M-d[ H[:m[:s[.SSS]]]]")
+											.appendPattern("yyyy-M[-d[ H[:m[:s[.SSS]]]]]")
 											.parseLenient()
+											.parseDefaulting(java.time.temporal.ChronoField.DAY_OF_MONTH, 1)
 											.parseDefaulting(java.time.temporal.ChronoField.HOUR_OF_DAY, 0)
 											.parseDefaulting(java.time.temporal.ChronoField.MINUTE_OF_HOUR, 0)
 											.parseDefaulting(ChronoField.SECOND_OF_MINUTE, 0)
 											.toFormatter();
 	public static DateTimeFormatter DTF_COMMON_DT2  = new DateTimeFormatterBuilder()
-			.appendPattern("yyyy/M/d[ H[:m[:s[.SSS]]]]")
+			.appendPattern("yyyy/M[/d[ H[:m[:s[.SSS]]]]]")
 			.parseLenient()
+			.parseDefaulting(java.time.temporal.ChronoField.DAY_OF_MONTH, 1)
 			.parseDefaulting(java.time.temporal.ChronoField.HOUR_OF_DAY, 0)
 			.parseDefaulting(java.time.temporal.ChronoField.MINUTE_OF_HOUR, 0)
 			.parseDefaulting(ChronoField.SECOND_OF_MINUTE, 0)
 			.toFormatter();
 	public static DateTimeFormatter DTF_COMMON_DT3  = new DateTimeFormatterBuilder()
-			.appendPattern("yyyy年M月d日[H时[m分[s秒[.SSS]]]]")
+			.appendPattern("yyyy年M月[d日[H时[m分[s秒[.SSS]]]]]")
 			.parseLenient()
+			.parseDefaulting(java.time.temporal.ChronoField.DAY_OF_MONTH, 1)
 			.parseDefaulting(java.time.temporal.ChronoField.HOUR_OF_DAY, 0)
 			.parseDefaulting(java.time.temporal.ChronoField.MINUTE_OF_HOUR, 0)
 			.parseDefaulting(ChronoField.SECOND_OF_MINUTE, 0)
