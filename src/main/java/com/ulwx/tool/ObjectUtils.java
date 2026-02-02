@@ -19,6 +19,7 @@ package com.ulwx.tool;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.parser.Feature;
 import com.alibaba.fastjson.serializer.*;
+import com.esotericsoftware.kryo.Kryo;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import com.fasterxml.jackson.core.JsonGenerator;
 import com.fasterxml.jackson.core.JsonParser;
@@ -1524,7 +1525,7 @@ public abstract class ObjectUtils {
 	}
 
 	/**
-	 * 反射机制实现的深拷贝
+	 * 使用Cloner实现 深拷贝
 	 * 
 	 * @param object
 	 * @return
@@ -1536,12 +1537,41 @@ public abstract class ObjectUtils {
 		return cloner.deepClone(object);
 
 	}
+
+	/**
+	 * 使用Clone实现
+	 * @param object
+	 * @param setter
+	 * @return
+	 * @param <T>
+	 */
 	public static <T> T CloneWithDeep(T object, Consumer<Cloner> setter) {
 
 		Cloner cloner = new Cloner();
 		cloner.setNullTransient(true);
 		setter.accept(cloner);
 		return cloner.deepClone(object);
+
+	}
+
+	/**
+	 * 使用Kryo实现深拷贝
+	 * @param object
+	 * @param shallow
+	 * @return
+	 * @param <T>
+	 */
+	public static <T> T CloneWith(T object,boolean shallow) {
+
+		Kryo kryo = new Kryo();
+		if(shallow){
+			T deepCloned = kryo.copyShallow(object);
+			return deepCloned;
+		}else{
+			T cloned = kryo.copy(object);
+			return cloned;
+		}
+
 
 	}
 	/**
