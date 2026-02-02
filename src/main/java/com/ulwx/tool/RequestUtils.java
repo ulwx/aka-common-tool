@@ -371,6 +371,9 @@ public class RequestUtils {
 
 	}
 
+	public String  getJoinString(String name){
+		return StringUtils.joinSkipEmpty(this.getStrings(name));
+	}
 	public String[] getStrings(String name) {
 		try {
 			Object[] value = rParms.get(name);
