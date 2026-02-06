@@ -21,6 +21,8 @@ import org.apache.http.conn.socket.ConnectionSocketFactory;
 import org.apache.http.conn.socket.PlainConnectionSocketFactory;
 import org.apache.http.conn.ssl.NoopHostnameVerifier;
 import org.apache.http.conn.ssl.SSLConnectionSocketFactory;
+import org.apache.http.conn.ssl.TrustAllStrategy;
+import org.apache.http.conn.ssl.TrustSelfSignedStrategy;
 import org.apache.http.entity.ByteArrayEntity;
 import org.apache.http.entity.InputStreamEntity;
 import org.apache.http.entity.StringEntity;
@@ -131,15 +133,16 @@ public class MultiThreadHttpClient {
 
 	private static CloseableHttpClient getClient(int maxTotalConnections) {
 		try {
-			// 跳过 SSL 验证
+
+			// 创建自定义SSL上下文
 			SSLContext sslContext = SSLContexts.custom()
-					.loadTrustMaterial((chain, authType) -> true)
+					.loadTrustMaterial(TrustAllStrategy.INSTANCE)
 					.build();
 
-			SSLConnectionSocketFactory socketFactory = new SSLConnectionSocketFactory(
+			// 创建SSL Socket Factory，不验证主机名
+			SSLConnectionSocketFactory sslSocketFactory = new SSLConnectionSocketFactory(
 					sslContext,
-					NoopHostnameVerifier.INSTANCE
-			);
+					NoopHostnameVerifier.INSTANCE);
 
 			PoolingHttpClientConnectionManager connManager =
 					new PoolingHttpClientConnectionManager();
@@ -147,7 +150,7 @@ public class MultiThreadHttpClient {
 			connManager.setDefaultMaxPerRoute(maxTotalConnections / 2);
 
 			return HttpClients.custom()
-					.setSSLSocketFactory(socketFactory)
+					.setSSLSocketFactory(sslSocketFactory)
 					.setConnectionManager(connManager)
 					.setRedirectStrategy(new LaxRedirectStrategy())
 					.build();
