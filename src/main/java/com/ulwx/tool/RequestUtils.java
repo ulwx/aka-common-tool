@@ -157,7 +157,9 @@ public class RequestUtils {
 	public String getTrimString(String name){
 		return StringUtils.trim(this.getString(name));
 	}
-
+	public String getTrimSeparatorString(String name){
+		return StringUtils.joinSkipEmpty(StringUtils.trim(this.getString(name)));
+	}
 	public File getFile(String name) {
 		try {
 			File value = ArrayUtils.getFirst((File[]) rParms.get(name));

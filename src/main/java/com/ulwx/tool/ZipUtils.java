@@ -2,6 +2,7 @@ package com.ulwx.tool;
 
 import org.apache.commons.compress.archivers.ArchiveOutputStream;
 import org.apache.commons.compress.archivers.zip.ZipArchiveEntry;
+import org.apache.commons.compress.archivers.zip.ZipArchiveInputStream;
 import org.apache.commons.compress.archivers.zip.ZipArchiveOutputStream;
 import org.apache.commons.compress.archivers.zip.ZipFile;
 import org.slf4j.Logger;
@@ -9,6 +10,7 @@ import org.slf4j.LoggerFactory;
 import org.xerial.snappy.Snappy;
 
 import java.io.*;
+import java.nio.charset.Charset;
 import java.util.Enumeration;
 import java.util.zip.*;
 
@@ -232,104 +234,224 @@ public class ZipUtils {
 			zos.closeArchiveEntry();
 		}
 	}
-
+	private static final Charset[] CHARSETS = {
+			Charset.forName("GBK"),
+			Charset.forName("UTF-8"),
+			Charset.forName("GB18030"),
+			Charset.forName("CP437"),
+			Charset.forName("ISO-8859-1")
+	};
 	/**
 	 * 解压zip文件到指定的目录 File Unzip
-	 * 
+	 *
 	 * @param sToPath
 	 *            Directory path to be unzipted to
 	 * @param sZipFile
 	 *            zip File Name to be ziped
 	 */
-	public static void unZip(String sToPath, String sZipFile,
-			String fileNameEncoding) throws Exception {
-
+	public static void unZip(String sToPath, String sZipFile, String fileNameEncoding) throws Exception {
 		if (null == sToPath || ("").equals(sToPath.trim())) {
 			File objZipFile = new File(sZipFile);
 			sToPath = objZipFile.getParent();
-			// System.out.println(sToPath);
 		}
-		ZipFile zfile = new ZipFile(sZipFile, fileNameEncoding);
 
-		Enumeration zList = zfile.getEntries();
-		ZipArchiveEntry ze = null;
-		byte[] buf = new byte[1024];
-		while (zList.hasMoreElements()) {
+		// 先使用ISO-8859-1读取，然后手动转换文件名
+		try (InputStream is = new FileInputStream(sZipFile);
+			 ZipArchiveInputStream zis = new ZipArchiveInputStream(is, "ISO-8859-1", false)) {
 
-			ze = (ZipArchiveEntry)zList.nextElement();
+			byte[] buf = new byte[1024];
+			int entryCounter = 0;
 
-			if (ze.isDirectory()) {
+			while (true) {
+				ZipArchiveEntry ze = null;
+				try {
+					ze = zis.getNextZipEntry();
+					if (ze == null) break; // 没有更多条目
 
-				String dir = FileUtils.getDirectoryPath(sToPath + "/"
-						+ ze.getName());
+					entryCounter++;
+				} catch (Exception e) {
+					// 如果读取条目时发生编码错误，尝试跳过这个条目
+					log.error("读取ZIP条目时发生错误，尝试跳过: {}", e.getMessage());
 
-				FileUtils.makeDirectory(dir);
-
-
-			} else {
-				FileUtils.makeDirectory(sToPath);
-				String filePath = FileUtils.getDirectoryPath(sToPath + "/"
-						+ ze.getName());
-				FileUtils.makeDirectory(FileUtils.getParentPath(filePath));
-				OutputStream os = new BufferedOutputStream(
-						new FileOutputStream(filePath));
-				InputStream is = new BufferedInputStream(
-						zfile.getInputStream(ze));
-				int readLen = 0;
-				while ((readLen = is.read(buf, 0, 1024)) != -1) {
-					os.write(buf, 0, readLen);
+					// 尝试跳过损坏的条目
+					try {
+						// 跳过当前条目的内容
+						long skipped = zis.skip(Long.MAX_VALUE);
+						log.debug("跳过了 {} 字节", skipped);
+						continue;
+					} catch (Exception skipEx) {
+						log.error("无法跳过损坏的ZIP条目", skipEx);
+						break;
+					}
 				}
-				is.close();
-				os.close();
+
+				try {
+					// 处理文件名编码问题
+					String originalName = ze.getName();
+					String decodedName = decodeZipEntryName(originalName);
+					String safeName = makeSafeFileName(decodedName);
+
+					if (ze.isDirectory()) {
+						String dir = FileUtils.getDirectoryPath(sToPath + "/" + safeName);
+						FileUtils.makeDirectory(dir);
+					} else {
+						String filePath = FileUtils.getDirectoryPath(sToPath + "/" + safeName);
+						FileUtils.makeDirectory(FileUtils.getParentPath(filePath));
+
+						try (OutputStream os = new BufferedOutputStream(new FileOutputStream(filePath))) {
+							int readLen = 0;
+							while ((readLen = zis.read(buf, 0, 1024)) != -1) {
+								os.write(buf, 0, readLen);
+							}
+						}
+					}
+				} catch (Exception e) {
+					log.error("解压文件失败！条目: {}, 错误: {}", ze != null ? ze.getName() : "unknown", e.getMessage());
+					// 继续处理下一个文件
+				}
 			}
 		}
-		zfile.close();
 	}
 
+	/**
+	 * 解码ZIP条目名称
+	 */
+	private static String decodeZipEntryName(String name) {
+		if (name == null) return "unknown_" + System.currentTimeMillis();
+
+		// 尝试多种编码解码
+		String[] encodings = {"GBK", "UTF-8", "GB2312", "CP437"};
+
+		for (String encoding : encodings) {
+			try {
+				// 假设名称是以ISO-8859-1存储的，尝试转换到目标编码
+				byte[] bytes = name.getBytes("ISO-8859-1");
+				String decoded = new String(bytes, encoding);
+
+				// 检查解码后的字符串是否合理（不包含太多乱码字符）
+				if (isValidFileName(decoded)) {
+					return decoded;
+				}
+			} catch (Exception e) {
+				log.error("当前编码 {} 失败: {}，尝试下一个编码", encoding, e.getMessage());
+			}
+		}
+
+		// 如果所有编码都失败，返回一个安全的默认名称
+		return "decoded_file_" + System.currentTimeMillis();
+	}
+
+	/**
+	 * 检查文件名是否有效（不包含太多乱码）
+	 */
+	private static boolean isValidFileName(String fileName) {
+		if (fileName == null || fileName.isEmpty()) return false;
+		return true;
+	}
+
+	/**
+	 * 创建安全的文件名（过滤Windows文件系统不允许的字符）
+	 */
+	private static String makeSafeFileName(String fileName) {
+		if (fileName == null) return "unknown";
+
+		// Windows文件系统不允许的字符
+		String illegalChars = "[\\\\/:*?\"<>|]";
+
+		// 替换非法字符为下划线
+		String safeName = fileName.replaceAll(illegalChars, "_");
+
+		// 处理文件名过长的情况
+		if (safeName.length() > 255) {
+			String extension = "";
+			int lastDot = safeName.lastIndexOf(".");
+			if (lastDot > 0) {
+				extension = safeName.substring(lastDot);
+				safeName = safeName.substring(0, lastDot);
+			}
+
+			// 保留前250个字符（留5个字符给编号和扩展名）
+			if (safeName.length() > 250) {
+				safeName = safeName.substring(0, 250) + "_truncated";
+			}
+
+			safeName = safeName + extension;
+		}
+
+		// 处理文件名以空格或点结尾的情况（Windows不允许）
+		safeName = safeName.replaceAll("[. ]+$", "_");
+
+		// 如果文件名变为空，使用默认名
+		if (safeName.trim().isEmpty()) {
+			safeName = "unnamed_file_" + System.currentTimeMillis();
+		}
+
+		return safeName;
+	}
 	public static void unZip(String sToPath, File srcZipFile,
 			String fileNameEncoding) throws Exception {
 
 		if (null == sToPath || ("").equals(sToPath.trim())) {
 			File objZipFile = srcZipFile;
 			sToPath = objZipFile.getParent();
-			// System.out.println(sToPath);
 		}
-		ZipFile zfile = new ZipFile(srcZipFile, fileNameEncoding);
 
-		Enumeration zList = zfile.getEntries();
-		ZipArchiveEntry ze = null;
-		byte[] buf = new byte[1024];
-		while (zList.hasMoreElements()) {
+		// 先使用ISO-8859-1读取，然后手动转换文件名
+		try (InputStream is = new FileInputStream(srcZipFile);
+			 ZipArchiveInputStream zis = new ZipArchiveInputStream(is, "ISO-8859-1", false)) {
 
-			ze = (ZipArchiveEntry)zList.nextElement();
+			byte[] buf = new byte[1024];
+			int entryCounter = 0;
 
-			if (ze.isDirectory()) {
-			
-				String dir = FileUtils.getDirectoryPath(sToPath + "/"
-						+ ze.getName());
-				
-				FileUtils.makeDirectory(dir);
-				
+			while (true) {
+				ZipArchiveEntry ze = null;
+				try {
+					ze = zis.getNextZipEntry();
+					if (ze == null) break; // 没有更多条目
 
-			} else {
-				FileUtils.makeDirectory(sToPath);
-				String filePath = FileUtils.getDirectoryPath(sToPath + "/"
-						+ ze.getName());
+					entryCounter++;
+				} catch (Exception e) {
+					// 如果读取条目时发生编码错误，尝试跳过这个条目
+					log.error("读取ZIP条目时发生错误，尝试跳过: {}", e.getMessage());
 
-				FileUtils.makeDirectory(FileUtils.getParentPath(filePath));
-				OutputStream os = new BufferedOutputStream(
-						new FileOutputStream(filePath));
-				InputStream is = new BufferedInputStream(
-						zfile.getInputStream(ze));
-				int readLen = 0;
-				while ((readLen = is.read(buf, 0, 1024)) != -1) {
-					os.write(buf, 0, readLen);
+					// 尝试跳过损坏的条目
+					try {
+						// 跳过当前条目的内容
+						long skipped = zis.skip(Long.MAX_VALUE);
+						log.debug("跳过了 {} 字节", skipped);
+						continue;
+					} catch (Exception skipEx) {
+						log.error("无法跳过损坏的ZIP条目", skipEx);
+						break;
+					}
 				}
-				is.close();
-				os.close();
+
+				try {
+					// 处理文件名编码问题
+					String originalName = ze.getName();
+					String decodedName = decodeZipEntryName(originalName);
+					String safeName = makeSafeFileName(decodedName);
+
+					if (ze.isDirectory()) {
+						String dir = FileUtils.getDirectoryPath(sToPath + "/" + safeName);
+						FileUtils.makeDirectory(dir);
+					} else {
+						String filePath = FileUtils.getDirectoryPath(sToPath + "/" + safeName);
+						FileUtils.makeDirectory(FileUtils.getParentPath(filePath));
+
+						try (OutputStream os = new BufferedOutputStream(new FileOutputStream(filePath))) {
+							int readLen = 0;
+							while ((readLen = zis.read(buf, 0, 1024)) != -1) {
+								os.write(buf, 0, readLen);
+							}
+						}
+					}
+				} catch (Exception e) {
+					log.error("解压文件失败！条目: {}, 错误: {}", ze != null ? ze.getName() : "unknown", e.getMessage());
+					// 继续处理下一个文件
+				}
 			}
 		}
-		zfile.close();
 	}
 
 	public byte[] snappyZip(String str)throws Exception{
