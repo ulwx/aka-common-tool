@@ -719,8 +719,6 @@ public abstract class StringUtils {
 			return m.start();
 		}
 		return -1;
-		// sql3.regionMatches(ignoreCase, toffset, other, ooffset, len)
-		// System.out.println(m.matches());
 	}
 
 	public static int indexOf(String srcStr, String regexp, boolean ignoreCase, TInteger endPos) {
@@ -3096,11 +3094,25 @@ public abstract class StringUtils {
 		// 		new int[] { 1, 2 });
 		//
 		// String s = "";
-
-		System.out.println(contain("123,abc, yuy ,ae","yuy",","));
+		String str="abc, 1234,yuy ,ae,eeee";
+		//int ret=StringUtils.indexOfRegex(str, "(\\d+)||(yue)");
+		int ret=StringUtils.indexOf(str, "(\\d+)|(yuy)",true);
+		System.out.println(ret);
 
 	}
 
+	public static int indexOfRegex(String str, String regex) {
+		if (str == null || regex == null) {
+			return -1;
+		}
 
+		Pattern pattern = Pattern.compile(regex);
+		Matcher matcher = pattern.matcher(str);
+
+		if (matcher.find()) {
+			return matcher.start();
+		}
+		return -1;
+	}
 
 }
