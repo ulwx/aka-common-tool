@@ -9,6 +9,7 @@ import org.apache.http.client.methods.HttpPost;
 import org.apache.http.client.utils.HttpClientUtils;
 import org.apache.http.conn.ssl.NoopHostnameVerifier;
 import org.apache.http.conn.ssl.SSLConnectionSocketFactory;
+import org.apache.http.conn.ssl.TrustAllStrategy;
 import org.apache.http.conn.ssl.TrustStrategy;
 import org.apache.http.entity.ContentType;
 import org.apache.http.entity.mime.HttpMultipartMode;
@@ -19,10 +20,12 @@ import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClients;
 import org.apache.http.impl.client.LaxRedirectStrategy;
 import org.apache.http.ssl.SSLContextBuilder;
+import org.apache.http.ssl.SSLContexts;
 import org.apache.http.util.EntityUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import javax.net.ssl.SSLContext;
 import java.io.File;
 import java.io.InputStream;
 import java.nio.charset.Charset;
@@ -345,16 +348,17 @@ public class HttpUtils {
 		String result = null;
 		try {
 			SSLContextBuilder builder = new SSLContextBuilder();
-			// 全部信任 不做身份鉴定
-			builder.loadTrustMaterial(null, new TrustStrategy() {
-				@Override
-				public boolean isTrusted(X509Certificate[] x509Certificates, String s) throws CertificateException {
-					return true;
-				}
-			});
 
-			SSLConnectionSocketFactory sslsf = new SSLConnectionSocketFactory(builder.build(),
-					new String[] { "SSLv2Hello", "SSLv3", "TLSv1", "TLSv1.2" }, null, NoopHostnameVerifier.INSTANCE);
+			SSLContext sslContext = SSLContexts.custom()
+					.loadTrustMaterial(TrustAllStrategy.INSTANCE)
+					.build();
+
+			SSLConnectionSocketFactory sslSocketFactory = new SSLConnectionSocketFactory(
+					sslContext,
+					NoopHostnameVerifier.INSTANCE);
+
+//			SSLConnectionSocketFactory sslsf = new SSLConnectionSocketFactory(builder.build(),
+//					new String[] {  "TLSv1.2", "TLSv1.3" }, null, NoopHostnameVerifier.INSTANCE);
 			LaxRedirectStrategy redirectStrategy = new LaxRedirectStrategy();  
 
 			RequestConfig requestConfig = RequestConfig.custom()
@@ -362,11 +366,10 @@ public class HttpUtils {
 					.setSocketTimeout(timeout)        // 读取超时时间，单位毫秒
 					.setConnectionRequestTimeout(timeout) // 从连接池获取连接的超时时间，单位毫秒
 					.build();
-//			httpclient= HttpClients.custom().setRedirectStrategy(redirectStrategy).
-//					setSSLSocketFactory(sslsf).build();
+
 			httpclient = HttpClients.custom()
 					.setRedirectStrategy(redirectStrategy)
-					.setSSLSocketFactory(sslsf)
+					.setSSLSocketFactory(sslSocketFactory)
 					.setDefaultRequestConfig(requestConfig)  // 设置默认请求配置
 					.build();
 			HttpPost httpPost = new HttpPost(postUrl);
