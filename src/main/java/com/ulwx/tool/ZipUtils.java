@@ -356,10 +356,10 @@ public class ZipUtils {
 		if (fileName == null) return "unknown";
 
 		// Windows文件系统不允许的字符
-		String illegalChars = "[\\\\/:*?\"<>|]";
+		String illegalChars = "[:*?\"<>|]";
 
 		// 替换非法字符为下划线
-		String safeName = fileName.replaceAll(illegalChars, "_");
+		String safeName = fileName.replaceAll(illegalChars, "");
 
 		// 处理文件名过长的情况
 		if (safeName.length() > 255) {
@@ -388,6 +388,8 @@ public class ZipUtils {
 
 		return safeName;
 	}
+
+
 	public static void unZip(String sToPath, File srcZipFile,
 			String fileNameEncoding) throws Exception {
 
@@ -467,7 +469,7 @@ public class ZipUtils {
 	}
 	public static void main(String[] args) throws Exception {
 		
-		ZipUtils.unZip("d:/sunchaojin", "d:/坤平.zip", "gbk");
+		ZipUtils.unZip("d:/zip", "d:/zip/ADZX-POD.zip", "gbk");
 	
 
 	}
