@@ -222,6 +222,7 @@ public  class NumberUtils {
 			Assert.notNull(text, "Text must not be null");
 			Assert.notNull(targetClass, "Target class must not be null");
 			try {
+				text = text.trim().replace(",", "");
 				Number number = numberFormat.parse(text.trim());
 				return convertNumberToTargetClass(number, targetClass);
 			} catch (ParseException ex) {
@@ -239,10 +240,11 @@ public  class NumberUtils {
 		NumberFormat df = NumberFormat.getInstance();
 		long result;
 		try {
+			value = value.replace(",", "");
 			result = df.parse(value).longValue();
 		} catch (ParseException e) {
 			// TODO Auto-generated catch block
-			result = 0;
+			throw new RuntimeException(e);
 		}
 		return result;
 	}
@@ -287,10 +289,11 @@ public  class NumberUtils {
 		NumberFormat df = NumberFormat.getInstance();
 		int result;
 		try {
+			value = value.replace(",", "");
 			result = df.parse(value).intValue();
 		} catch (ParseException e) {
 			// TODO Auto-generated catch block
-			result = 0;
+			throw new RuntimeException(e);
 		}
 		return result;
 	}
@@ -302,10 +305,11 @@ public  class NumberUtils {
 		NumberFormat df = NumberFormat.getInstance();
 		float result;
 		try {
+			value = value.replace(",", "");
 			result = df.parse(value).floatValue();
 		} catch (ParseException e) {
 			// TODO Auto-generated catch block
-			result = 0;
+			throw new RuntimeException(e);
 		}
 		return result;
 	}
@@ -317,10 +321,11 @@ public  class NumberUtils {
 		NumberFormat df = NumberFormat.getInstance();
 		double result;
 		try {
+			value = value.replace(",", "");
 			result = df.parse(value).doubleValue();
 		} catch (ParseException e) {
 			// TODO Auto-generated catch block
-			result = 0;
+			throw new RuntimeException(e);
 		}
 		return result;
 	}
@@ -332,10 +337,11 @@ public  class NumberUtils {
 		NumberFormat df = NumberFormat.getInstance();
 		short result;
 		try {
+			value = value.trim().replace(",", "");
 			result = df.parse(value).shortValue();
 		} catch (ParseException e) {
 			// TODO Auto-generated catch block
-			result = 0;
+			throw new RuntimeException(e);
 		}
 		return result;
 	}
