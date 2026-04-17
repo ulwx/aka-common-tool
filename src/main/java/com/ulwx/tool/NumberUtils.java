@@ -145,6 +145,7 @@ public  class NumberUtils {
 		Assert.notNull(targetClass, "Target class must not be null");
 
 		String trimmed = text.trim();
+		trimmed = trimmed.replace(",", "");
 		String signchar="";
 		if(trimmed.charAt(0)=='+'||trimmed.charAt(0)=='-'){
 			signchar=trimmed.charAt(0)+"";
@@ -259,7 +260,7 @@ public  class NumberUtils {
 		int radix = 10;
 		int index = 0;
 		boolean negative = false;
-
+		value = value.replace(",", "");
 		// Handle minus sign, if present.
 		if (value.startsWith("-")) {
 			negative = true;
