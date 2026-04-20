@@ -396,7 +396,24 @@ public class RequestUtils {
 			return null;
 		}
 	}
+	public String[] getOriginStrings(String name) {
+		try {
+			Object[] value = rParms.get(name);
+			if (value == null) {
+				return new String[0];
+			}
 
+			if (value.getClass().getComponentType() == String.class) {
+				return (String[]) value;
+			} else {
+				return ArrayUtils.toStringArray(value);
+			}
+
+		} catch (Exception e) {
+			// log.error("", e);
+			return null;
+		}
+	}
 	public void setFloats(String name, Float[] values) {
 		rParms.put(name, values);
 	}
