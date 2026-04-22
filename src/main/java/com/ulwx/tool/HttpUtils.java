@@ -372,6 +372,7 @@ public class HttpUtils {
 					.setSSLSocketFactory(sslSocketFactory)
 					.setDefaultRequestConfig(requestConfig)  // 设置默认请求配置
 					.build();
+			log.debug("postUrl="+postUrl);
 			HttpPost httpPost = new HttpPost(postUrl);
 			ContentType contentType = ContentType.create("multipart/form-data", Charset.forName("UTF-8"));
 			MultipartEntityBuilder mEntityBuilder = MultipartEntityBuilder.create().setMode(HttpMultipartMode.RFC6532);
@@ -393,7 +394,13 @@ public class HttpUtils {
 			response = httpclient.execute(httpPost);
 
 			int statusCode = response.getStatusLine().getStatusCode();
+			log.error("statusCode="+statusCode);
 			if (statusCode == HttpStatus.SC_OK) {
+				HttpEntity resEntity = response.getEntity();
+				result = EntityUtils.toString(resEntity,"utf-8");
+				// 消耗掉response
+				EntityUtils.consume(resEntity);
+			}else{
 				HttpEntity resEntity = response.getEntity();
 				result = EntityUtils.toString(resEntity,"utf-8");
 				// 消耗掉response
