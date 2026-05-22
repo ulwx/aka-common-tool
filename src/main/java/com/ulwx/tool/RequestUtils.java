@@ -157,6 +157,15 @@ public class RequestUtils {
 	public String getTrimString(String name){
 		return StringUtils.trim(this.getString(name));
 	}
+
+	public String[] getTrimSeparatorStrings(String name){
+		String str= getTrimSeparatorString(name);
+		if(StringUtils.hasText(str)) {
+			String[] strs = str.split(",");
+			return strs;
+		}
+		return new String[0];
+	}
 	public String getTrimSeparatorString(String name){
 		return StringUtils.joinSkipEmpty(StringUtils.trim(this.getString(name)));
 	}
