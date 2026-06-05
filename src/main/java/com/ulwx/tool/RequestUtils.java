@@ -183,7 +183,11 @@ public class RequestUtils {
 	}
 	public <T> T getJson(String name,Class<T> c) throws Exception{
 		String str=this.getString(name);
-		return (T)ObjectUtils.fromJsonToObject(str, c);
+		try {
+			return (T) ObjectUtils.fromJsonToObject(str, c);
+		}catch (Exception e) {
+			return null;
+		}
 	}
 
 	public String getBody(){
