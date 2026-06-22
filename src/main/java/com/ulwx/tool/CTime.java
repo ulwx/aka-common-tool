@@ -924,7 +924,7 @@ public class CTime {
 		}else if(dt.contains("年")){
 			return LocalDateTime.parse(dt, CTime.DTF_COMMON_DT3);
 		}
-		return null;
+		throw new RuntimeException("日期格式错误!");
 	}
 	public static LocalDate parseToLocalDate(String dt){
 		return LocalDate.parse(dt, CTime.DTF_YMD);
@@ -1157,10 +1157,12 @@ public class CTime {
 //		System.out.println(CTime.formatWholeAllDate(dttt));
 //		System.out.println(isWeekday(LocalDate.now()));
 		
-		Date dt=nextMonthsWithCurDay(CTime.LocalDateToDate(LocalDate.of(2019, 1, 31)),3);
-		System.out.println(CTime.formatRealDate(dt));
-		dt=addMonths(CTime.LocalDateToDate(LocalDate.of(2019, 1, 31)),3);
-		System.out.println(CTime.formatRealDate(dt));
+//		Date dt=nextMonthsWithCurDay(CTime.LocalDateToDate(LocalDate.of(2019, 1, 31)),3);
+//		System.out.println(CTime.formatRealDate(dt));
+//		dt=addMonths(CTime.LocalDateToDate(LocalDate.of(2019, 1, 31)),3);
+//		System.out.println(CTime.formatRealDate(dt));
+		String s="2026/4/2";
+		System.out.println(CTime.parseToLocalDateTimeWithCommon(s));
 		
 
 	}
