@@ -3003,9 +3003,8 @@ public abstract class StringUtils {
 		if (input == null || input.trim().isEmpty()) {
 			return result;
 		}
-		String cleanedInput = input.replaceAll("\\r?\\n", "");
 		// 分割字符串
-		String[] parts = cleanedInput.split("[,，;；]");
+		String[] parts = input.split("[,;，；\\s]+");
 
 		for (String part : parts) {
 			String trimmed = part.trim();
