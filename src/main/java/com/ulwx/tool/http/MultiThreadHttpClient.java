@@ -148,8 +148,7 @@ public class MultiThreadHttpClient {
 					new PoolingHttpClientConnectionManager();
 			connManager.setMaxTotal(maxTotalConnections);
 			connManager.setDefaultMaxPerRoute(maxTotalConnections / 2);
-//			connManager.closeExpiredConnections();
-//			connManager.closeIdleConnections(15, TimeUnit.SECONDS);
+
 
 			return HttpClients.custom()
 					.setSSLSocketFactory(sslSocketFactory)

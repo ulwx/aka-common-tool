@@ -1275,6 +1275,17 @@ public class FileUtils {
     public static File getTempDirectory() {
         return new File(org.apache.commons.io.FileUtils.getTempDirectoryPath());
     }
+
+	public static File getTempFile(String fileName)  {
+		try {
+			File file = new File(FileUtils.getTempDirectory().getAbsolutePath() + "/" + fileName);
+			file.createNewFile();
+			return file;
+		} catch (IOException e) {
+			log.error(e + "", e);
+			return null;
+		}
+	}
 	/**
 	 * 得到文件的类型。 实际上就是得到文件名中最后一个“.”后面的部分。
 	 * 
