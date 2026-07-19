@@ -1899,7 +1899,7 @@ public abstract class StringUtils {
 		return ArrayUtils.toString(arr, delim);
 	}
 	/**
-	 * 返回第一个非null的对象
+	 * 返回第一个非null或空字符串的对象
 	 * @param values 可变参数列表
 	 * @param <T> 泛型类型
 	 * @return 第一个非null的值，如果全部为null则返回null
