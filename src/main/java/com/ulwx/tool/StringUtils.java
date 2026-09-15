@@ -1918,6 +1918,18 @@ public abstract class StringUtils {
 
 		return null;
 	}
+	public static Object coalesce(Object... values) {
+		if (values == null) {
+			return null;
+		}
+		for (Object value : values) {
+			if (value!=null) {
+				return value;
+			}
+		}
+
+		return null;
+	}
 	public static String joinSkipEmpty(String... strings) {
 		if (strings == null || strings.length == 0) {
 			return "";
