@@ -653,6 +653,7 @@ public class MultiThreadHttpClient {
 
 		for (Object key : keys) {
 			Object value = map.get(key);
+			if(value==null) continue;
 			if (value.getClass().isArray()) {
 				String[] values = (String[]) value;
 				for (int i = 0; i < values.length; i++) {
