@@ -32,7 +32,16 @@ import java.text.ParseException;
  */
 public  class NumberUtils {
 
-
+	public static Double toDouble(Object result) {
+		if (result == null) {
+			return null;   // 或抛异常，看业务
+		}
+		if (result instanceof Number) {
+			return ((Number) result).doubleValue();
+		}
+		// 兜底：字符串数字也能转
+		return Double.parseDouble(result.toString());
+	}
 	public static Number convertNumberToTargetClass(String number,
 													Class targetClass) throws IllegalArgumentException{
 		return NumberUtils.parseNumber(number, targetClass);
