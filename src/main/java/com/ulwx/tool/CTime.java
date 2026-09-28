@@ -917,6 +917,7 @@ public class CTime {
 	}
 	public static LocalDateTime parseToLocalDateTimeWithCommon(String dt){
 		dt=dt.replaceAll(" +"," ");
+		dt=dt.replaceAll("T"," ");
 		if(dt.contains("-")) {
 			return LocalDateTime.parse(dt, CTime.DTF_COMMON_DT);
 		}else if(dt.contains("/")){
